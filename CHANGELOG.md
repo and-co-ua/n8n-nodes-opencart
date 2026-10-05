@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-05
+
+### Added
+
+- Customer resource: Create, Update, Get, Get Many, Delete with addresses, custom fields and
+  password; Add / Get History, Add / Get Transactions, Add / Get Reward Points.
+- Customer Group resource with Create, Delete, Get, Get Many, Update.
+- Customer Approval resource: Get Many, Approve, Deny.
+- Customer picker with search (resource locator).
+- Return All / Limit for history, transactions and reward points.
+
 ## [0.5.0] - 2026-10-05
 
 ### Added
