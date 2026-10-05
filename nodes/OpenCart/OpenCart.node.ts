@@ -9,6 +9,14 @@ import type {
 import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
 import {
+	attributeFields,
+	attributeGroupFields,
+	attributeGroupOperations,
+	attributeOperations,
+	buildAttributeGroupRequest,
+	buildAttributeRequest,
+} from './descriptions/AttributeDescription';
+import {
 	buildCategoryRequest,
 	categoryFields,
 	categoryOperations,
@@ -29,6 +37,8 @@ const BUILDERS: Record<
 	string,
 	(this: IExecuteFunctions, operation: string, i: number) => ApiCall
 > = {
+	attribute: buildAttributeRequest,
+	attribute_group: buildAttributeGroupRequest,
 	category: buildCategoryRequest,
 	lookup: buildLookupRequest,
 	manufacturer: buildManufacturerRequest,
@@ -64,6 +74,14 @@ export class OpenCart implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Attribute',
+						value: 'attribute',
+					},
+					{
+						name: 'Attribute Group',
+						value: 'attribute_group',
+					},
+					{
 						name: 'Category',
 						value: 'category',
 					},
@@ -83,6 +101,10 @@ export class OpenCart implements INodeType {
 				],
 				default: 'category',
 			},
+			...attributeOperations,
+			...attributeFields,
+			...attributeGroupOperations,
+			...attributeGroupFields,
 			...categoryOperations,
 			...categoryFields,
 			...lookupOperations,

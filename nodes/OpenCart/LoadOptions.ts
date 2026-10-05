@@ -91,6 +91,22 @@ export const loadOptions = {
 		return [{ name: '(Top Level)', value: 0 }, ...(await loadOptions.getCategories.call(this))];
 	},
 
+	async getAttributeGroups(this: ILoadOptionsFunctions) {
+		const rows = await openCartApiRequestAllItems.call(this, 'attribute_group', 'list', { sort: 'name' });
+
+		return rows.map((row) => ({ name: String(row.name), value: row.attribute_group_id as number }));
+	},
+
+	/** Attributes as "Group / Name". */
+	async getAttributes(this: ILoadOptionsFunctions) {
+		const rows = await openCartApiRequestAllItems.call(this, 'attribute', 'list', {});
+
+		return rows.map((row) => ({
+			name: `${row.attribute_group} / ${row.name}`,
+			value: row.attribute_id as number,
+		}));
+	},
+
 	async getManufacturers(this: ILoadOptionsFunctions) {
 		const rows = await openCartApiRequestAllItems.call(this, 'manufacturer', 'list', { sort: 'name' });
 
