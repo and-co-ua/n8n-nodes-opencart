@@ -23,6 +23,11 @@ import {
 } from './descriptions/CategoryDescription';
 import type { ApiCall } from './descriptions/common';
 import {
+	buildCustomerGroupRequest,
+	customerGroupFields,
+	customerGroupOperations,
+} from './descriptions/CustomerGroupDescription';
+import {
 	buildDownloadRequest,
 	downloadFields,
 	downloadOperations,
@@ -63,6 +68,7 @@ const BUILDERS: Record<
 	attribute: buildAttributeRequest,
 	attribute_group: buildAttributeGroupRequest,
 	category: buildCategoryRequest,
+	customer_group: buildCustomerGroupRequest,
 	download: buildDownloadRequest,
 	filter_group: buildFilterGroupRequest,
 	information: buildInformationRequest,
@@ -158,6 +164,10 @@ export class OpenCart implements INodeType {
 						value: 'category',
 					},
 					{
+						name: 'Customer Group',
+						value: 'customer_group',
+					},
+					{
 						name: 'Download',
 						value: 'download',
 					},
@@ -203,6 +213,8 @@ export class OpenCart implements INodeType {
 			...attributeGroupFields,
 			...categoryOperations,
 			...categoryFields,
+			...customerGroupOperations,
+			...customerGroupFields,
 			...downloadOperations,
 			...downloadFields,
 			...filterGroupOperations,
