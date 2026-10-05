@@ -32,6 +32,11 @@ import {
 	filterGroupFields,
 	filterGroupOperations,
 } from './descriptions/FilterGroupDescription';
+import {
+	buildInformationRequest,
+	informationFields,
+	informationOperations,
+} from './descriptions/InformationDescription';
 import { buildLookupRequest, lookupFields, lookupOperations } from './descriptions/LookupDescription';
 import {
 	buildManufacturerRequest,
@@ -54,6 +59,7 @@ const BUILDERS: Record<
 	category: buildCategoryRequest,
 	download: buildDownloadRequest,
 	filter_group: buildFilterGroupRequest,
+	information: buildInformationRequest,
 	lookup: buildLookupRequest,
 	manufacturer: buildManufacturerRequest,
 	option: buildOptionRequest,
@@ -110,6 +116,10 @@ export class OpenCart implements INodeType {
 						value: 'filter_group',
 					},
 					{
+						name: 'Information Page',
+						value: 'information',
+					},
+					{
 						name: 'Lookup',
 						value: 'lookup',
 						description: 'Reference lists: languages, statuses, countries and more',
@@ -143,6 +153,8 @@ export class OpenCart implements INodeType {
 			...downloadFields,
 			...filterGroupOperations,
 			...filterGroupFields,
+			...informationOperations,
+			...informationFields,
 			...lookupOperations,
 			...lookupFields,
 			...manufacturerOperations,

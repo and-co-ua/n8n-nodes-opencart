@@ -143,6 +143,15 @@ export const loadOptions = {
 		);
 	},
 
+	async getInformationPages(this: ILoadOptionsFunctions) {
+		const rows = await openCartApiRequestAllItems.call(this, 'information', 'list', { sort: 'title' });
+
+		return rows.map((row) => ({
+			name: row.status === false ? `${row.title} (disabled)` : String(row.title),
+			value: row.information_id as number,
+		}));
+	},
+
 	async getLayouts(this: ILoadOptionsFunctions) {
 		return lookupOptions.call(this, 'layouts', 'layout_id', byName);
 	},
