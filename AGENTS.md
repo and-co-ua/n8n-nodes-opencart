@@ -6,11 +6,12 @@ single source of truth — the node implements what is written there.
 
 ## Status
 
-- **Version:** 0.3.0
-- **Stages done:** 0 Bootstrap, 1 Core (credentials, request helper, errors, `api_version`
-  check, System → Ping), 2 Lookups (`loadOptions` for 13 reference lists, Lookup → Get Many).
-- **Next:** stage 3 — Catalog (0.4.0): categories, manufacturers, attribute groups +
-  attributes, options, filters, downloads, reviews, information pages.
+- **Version:** 0.4.0
+- **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog (Attribute, Attribute Group,
+  Category, Download with binary upload, Filter Group, Information Page, Manufacturer, Option,
+  Review).
+- **Next:** stage 4 — Products (0.5.0): Product resource, product picker (`getProducts` /
+  resource locator for large catalogs), lookups for stock statuses and length/weight classes.
 - **Not yet verified in a running n8n:** the credential test request (`test`) — run
   `npm run dev` and test the credentials manually.
 
@@ -35,7 +36,9 @@ OpenCart node ──POST JSON──► {store}/index.php?route=api/n8n
 nodes/OpenCart/OpenCart.node.ts     node description, buildRequest() (operation → API action + params), execute()
 nodes/OpenCart/GenericFunctions.ts  openCartApiRequest(), SUPPORTED_API_VERSION
 nodes/OpenCart/LoadOptions.ts       loadOptions methods (get<Lookup>), backed by lookup.* actions
-nodes/OpenCart/descriptions/        <Resource>Description.ts: operations + fields per resource
+nodes/OpenCart/descriptions/        <Resource>Description.ts: operations, fields, build<Resource>Request()
+nodes/OpenCart/descriptions/common.ts  ApiCall, languageField, listFields, sortOptions, listParams,
+                                    descriptionItem, seoUrlItem, toApiDate
 nodes/OpenCart/OpenCart.node.json   codex (category Sales, docs links)
 nodes/OpenCart/opencart(.dark).svg  icons
 credentials/OpenCartApi.credentials.ts  url, apiKey, authMethod, route; custom authenticate(); ping test
@@ -55,7 +58,12 @@ Every node and credential must be registered in `package.json` → `n8n.nodes` /
    reads the `countryId` parameter) with the "Name or ID" display name convention.
 4. Build `params` from node parameters and call `openCartApiRequest.call(this, resource, action, params, i)`.
    Array `data` becomes one output item per element.
-5. Errors: in `catch`, wrap with `NodeApiError`/`NodeOperationError` (the lint rule forbids
+5. Texts: one language per call — `languageField()` + `descriptionItem()` builds
+   `descriptions: [{ language_id?, ...fields }]`; `seoUrlItem()` builds `seo_urls`.
+   Dates from `dateTime` fields go through `toApiDate()` (`endOfDay` for "to" filters).
+   Files: read input binary with `assertBinaryData()` + `getBinaryDataBuffer()` and send
+   `{ content: base64, name, mime_type }` (builders may be async).
+6. Errors: in `catch`, wrap with `NodeApiError`/`NodeOperationError` (the lint rule forbids
    re-throwing the caught value; both constructors return an error of their own class unchanged).
 
 ## Commands

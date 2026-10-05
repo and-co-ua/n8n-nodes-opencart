@@ -7,7 +7,7 @@ and maintenance tasks.
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/)
 workflow automation platform.
 
-> **Status:** early development (0.x). Available: connection check and reference lists.
+> **Status:** early development (0.x). Available: catalog management, reference lists, connection check.
 
 [Installation](#installation) ·
 [Operations](#operations) ·
@@ -26,15 +26,27 @@ workflow automation platform.
 
 | Resource | Operation | Description |
 |---|---|---|
+| Attribute | Create, Delete, Get, Get Many, Update | Product attributes (e.g. "Diagonal") within attribute groups. |
+| Attribute Group | Create, Delete, Get, Get Many, Update | Groups of attributes (e.g. "Display"). |
+| Category | Create, Delete, Get, Get Many, Update | Categories with parent, description, meta tags, SEO keyword, stores, filters, top menu settings. Delete also removes subcategories. |
+| Download | Create, Delete, Get, Get Many, Update | Downloadable files for products; the file is uploaded from an input binary field. |
+| Filter Group | Create, Delete, Get, Get Many, Update | Filter groups with their filters (layered navigation). |
+| Information Page | Create, Delete, Get, Get Many, Update | Pages like About Us or Delivery, with footer link, meta tags and SEO keyword. |
+| Manufacturer | Create, Delete, Get, Get Many, Update | Brands with image, SEO keyword and stores. |
+| Option | Create, Delete, Get, Get Many, Update | Product options (select, radio, checkbox, text, date, …) with their values. |
+| Review | Create, Delete, Get, Get Many, Update | Product reviews; filter by product, author, status and date, publish or edit them. |
 | Lookup | Get Many | Reference lists: countries, currencies, customer groups, languages, layouts, order statuses, return actions, return reasons, return statuses, stores, tax classes, voucher themes, zones (optionally of one country). Translated lists accept a language. |
 | System | Ping | Check the connection; returns API and module versions, OpenCart and PHP versions, access mode, the way the key was received, store name and server time. |
 
-Drop-downs for languages, countries, zones, statuses and other reference data are loaded
-from the store.
+Drop-downs for languages, countries, zones, statuses, categories, manufacturers and other
+reference data are loaded from the store.
 
-Planned: categories,
-manufacturers, attributes, options, filters, downloads, reviews, information pages,
-customers and customer groups, customer approvals, orders, returns, gift vouchers,
+**Languages.** Texts (names, descriptions, meta tags, SEO keywords) are written in the
+language selected in the node (the store default when empty). A new record gets a copy of the
+text in all other languages until it is translated; an update changes only the selected
+language and only the fields you set.
+
+Planned: products, customers and customer groups, customer approvals, orders, returns, gift vouchers,
 marketing campaigns, coupons, mailing, logs and maintenance tasks.
 
 ## Credentials
@@ -56,7 +68,7 @@ installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.3.0+).
+- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.4.0+).
 - Tested with the latest n8n release.
 
 ## Development
