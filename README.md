@@ -7,7 +7,7 @@ and maintenance tasks.
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/)
 workflow automation platform.
 
-> **Status:** early development (0.x). Only the connection check is available yet.
+> **Status:** early development (0.x). Available: connection check and reference lists.
 
 [Installation](#installation) ·
 [Operations](#operations) ·
@@ -26,9 +26,13 @@ workflow automation platform.
 
 | Resource | Operation | Description |
 |---|---|---|
+| Lookup | Get Many | Reference lists: countries, currencies, customer groups, languages, layouts, order statuses, return actions, return reasons, return statuses, stores, tax classes, voucher themes, zones (optionally of one country). Translated lists accept a language. |
 | System | Ping | Check the connection; returns API and module versions, OpenCart and PHP versions, access mode, the way the key was received, store name and server time. |
 
-Planned: lookups (languages, stores, currencies, statuses, countries, zones, …), categories,
+Drop-downs for languages, countries, zones, statuses and other reference data are loaded
+from the store.
+
+Planned: categories,
 manufacturers, attributes, options, filters, downloads, reviews, information pages,
 customers and customer groups, customer approvals, orders, returns, gift vouchers,
 marketing campaigns, coupons, mailing, logs and maintenance tasks.
@@ -52,7 +56,7 @@ installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.2.0+).
+- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.3.0+).
 - Tested with the latest n8n release.
 
 ## Development

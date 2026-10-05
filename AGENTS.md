@@ -6,11 +6,11 @@ single source of truth — the node implements what is written there.
 
 ## Status
 
-- **Version:** 0.2.0
-- **Stage done:** 1 — Core: `OpenCartApi` credentials (URL, key, auth method, route) with
-  `system.ping` test, request helper with envelope unwrapping and error mapping,
-  `api_version` check, System → Ping.
-- **Next:** stage 2 — Lookups (0.3.0): `loadOptions` backed by the `lookup` resource.
+- **Version:** 0.3.0
+- **Stages done:** 0 Bootstrap, 1 Core (credentials, request helper, errors, `api_version`
+  check, System → Ping), 2 Lookups (`loadOptions` for 13 reference lists, Lookup → Get Many).
+- **Next:** stage 3 — Catalog (0.4.0): categories, manufacturers, attribute groups +
+  attributes, options, filters, downloads, reviews, information pages.
 - **Not yet verified in a running n8n:** the credential test request (`test`) — run
   `npm run dev` and test the credentials manually.
 
@@ -32,8 +32,9 @@ OpenCart node ──POST JSON──► {store}/index.php?route=api/n8n
 ## Layout
 
 ```
-nodes/OpenCart/OpenCart.node.ts     node description, ACTIONS map (operation → API action), execute()
+nodes/OpenCart/OpenCart.node.ts     node description, buildRequest() (operation → API action + params), execute()
 nodes/OpenCart/GenericFunctions.ts  openCartApiRequest(), SUPPORTED_API_VERSION
+nodes/OpenCart/LoadOptions.ts       loadOptions methods (get<Lookup>), backed by lookup.* actions
 nodes/OpenCart/descriptions/        <Resource>Description.ts: operations + fields per resource
 nodes/OpenCart/OpenCart.node.json   codex (category Sales, docs links)
 nodes/OpenCart/opencart(.dark).svg  icons
@@ -48,8 +49,10 @@ Every node and credential must be registered in `package.json` → `n8n.nodes` /
 
 1. Check the contract in the module repository (`docs/API.md`).
 2. `descriptions/<Resource>Description.ts`: `<resource>Operations` and `<resource>Fields`.
-3. Register the resource option and spread the descriptions in `OpenCart.node.ts`; add the
-   operation → API action mapping to `ACTIONS`.
+3. Register the resource option and spread the descriptions in `OpenCart.node.ts`; map the
+   operation and node parameters to the API action and `params` in `buildRequest()`.
+   ID drop-downs use `loadOptionsMethod` from `LoadOptions.ts` (`get<Lookup>`; `getZones`
+   reads the `countryId` parameter) with the "Name or ID" display name convention.
 4. Build `params` from node parameters and call `openCartApiRequest.call(this, resource, action, params, i)`.
    Array `data` becomes one output item per element.
 5. Errors: in `catch`, wrap with `NodeApiError`/`NodeOperationError` (the lint rule forbids
