@@ -38,6 +38,15 @@ export const loadOptions = {
 		return lookupOptions.call(this, 'currencies', 'currency_id', (row) => `${row.title} (${row.code})`);
 	},
 
+	/** Currencies with the code as value (orders take currency_code). */
+	async getCurrencyCodes(this: ILoadOptionsFunctions) {
+		const { data } = await openCartApiRequest.call(this, 'lookup', 'currencies', {});
+
+		return (data as IDataObject[])
+			.filter((row) => row.status !== false)
+			.map((row) => ({ name: `${row.title} (${row.code})`, value: row.code as string }));
+	},
+
 	async getOrderStatuses(this: ILoadOptionsFunctions) {
 		return lookupOptions.call(this, 'order_statuses', 'order_status_id', byName);
 	},
