@@ -27,7 +27,7 @@ export function languageField(resource: string, operations: string[]): INodeProp
 	};
 }
 
-export function listFields(resource: string): INodeProperties[] {
+export function listFields(resource: string, operations: string[] = ['getAll']): INodeProperties[] {
 	return [
 		{
 			displayName: 'Return All',
@@ -36,7 +36,7 @@ export function listFields(resource: string): INodeProperties[] {
 			displayOptions: {
 				show: {
 					resource: [resource],
-					operation: ['getAll'],
+					operation: operations,
 				},
 			},
 			default: false,
@@ -49,7 +49,7 @@ export function listFields(resource: string): INodeProperties[] {
 			displayOptions: {
 				show: {
 					resource: [resource],
-					operation: ['getAll'],
+					operation: operations,
 					returnAll: [false],
 				},
 			},

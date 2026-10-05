@@ -198,4 +198,28 @@ export const listSearch = {
 			paginationToken: start + limit < Number(meta.total ?? 0) ? String(start + limit) : undefined,
 		};
 	},
+
+	/** Customers by name, e-mail or telephone, 50 per page, for the customer resource locator. */
+	async searchCustomers(
+		this: ILoadOptionsFunctions,
+		filter?: string,
+		paginationToken?: string,
+	): Promise<INodeListSearchResult> {
+		const start = paginationToken ? Number(paginationToken) : 0;
+		const limit = 50;
+		const { data, meta } = await openCartApiRequest.call(this, 'customer', 'list', {
+			filter_search: filter ?? '',
+			sort: 'name',
+			start,
+			limit,
+		});
+
+		return {
+			results: (data as IDataObject[]).map((row) => ({
+				name: `${row.firstname} ${row.lastname} <${row.email}>${row.status === false ? ' (disabled)' : ''}`,
+				value: String(row.customer_id),
+			})),
+			paginationToken: start + limit < Number(meta.total ?? 0) ? String(start + limit) : undefined,
+		};
+	},
 };

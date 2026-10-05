@@ -23,6 +23,12 @@ import {
 } from './descriptions/CategoryDescription';
 import type { ApiCall } from './descriptions/common';
 import {
+	buildCustomerApprovalRequest,
+	customerApprovalFields,
+	customerApprovalOperations,
+} from './descriptions/CustomerApprovalDescription';
+import { buildCustomerRequest, customerFields, customerOperations } from './descriptions/CustomerDescription';
+import {
 	buildCustomerGroupRequest,
 	customerGroupFields,
 	customerGroupOperations,
@@ -68,6 +74,8 @@ const BUILDERS: Record<
 	attribute: buildAttributeRequest,
 	attribute_group: buildAttributeGroupRequest,
 	category: buildCategoryRequest,
+	customer: buildCustomerRequest,
+	customer_approval: buildCustomerApprovalRequest,
 	customer_group: buildCustomerGroupRequest,
 	download: buildDownloadRequest,
 	filter_group: buildFilterGroupRequest,
@@ -164,6 +172,14 @@ export class OpenCart implements INodeType {
 						value: 'category',
 					},
 					{
+						name: 'Customer',
+						value: 'customer',
+					},
+					{
+						name: 'Customer Approval',
+						value: 'customer_approval',
+					},
+					{
 						name: 'Customer Group',
 						value: 'customer_group',
 					},
@@ -213,6 +229,10 @@ export class OpenCart implements INodeType {
 			...attributeGroupFields,
 			...categoryOperations,
 			...categoryFields,
+			...customerOperations,
+			...customerFields,
+			...customerApprovalOperations,
+			...customerApprovalFields,
 			...customerGroupOperations,
 			...customerGroupFields,
 			...downloadOperations,
