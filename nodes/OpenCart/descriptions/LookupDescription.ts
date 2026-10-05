@@ -10,6 +10,9 @@ const TRANSLATED = [
 	'return_actions',
 	'customer_groups',
 	'voucher_themes',
+	'stock_statuses',
+	'length_classes',
+	'weight_classes',
 ];
 
 export const lookupOperations: INodeProperties[] = [
@@ -54,13 +57,16 @@ export const lookupFields: INodeProperties[] = [
 			{ name: 'Customer Groups', value: 'customer_groups' },
 			{ name: 'Languages', value: 'languages' },
 			{ name: 'Layouts', value: 'layouts' },
+			{ name: 'Length Classes', value: 'length_classes' },
 			{ name: 'Order Statuses', value: 'order_statuses' },
 			{ name: 'Return Actions', value: 'return_actions' },
 			{ name: 'Return Reasons', value: 'return_reasons' },
 			{ name: 'Return Statuses', value: 'return_statuses' },
+			{ name: 'Stock Statuses', value: 'stock_statuses' },
 			{ name: 'Stores', value: 'stores' },
 			{ name: 'Tax Classes', value: 'tax_classes' },
 			{ name: 'Voucher Themes', value: 'voucher_themes' },
+			{ name: 'Weight Classes', value: 'weight_classes' },
 			{ name: 'Zones', value: 'zones' },
 		],
 		default: 'order_statuses',

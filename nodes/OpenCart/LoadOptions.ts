@@ -68,6 +68,18 @@ export const loadOptions = {
 		return lookupOptions.call(this, 'zones', 'zone_id', byName, { country_id: countryId as number });
 	},
 
+	async getStockStatuses(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'stock_statuses', 'stock_status_id', byName);
+	},
+
+	async getLengthClasses(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'length_classes', 'length_class_id', (row) => `${row.title} (${row.unit})`);
+	},
+
+	async getWeightClasses(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'weight_classes', 'weight_class_id', (row) => `${row.title} (${row.unit})`);
+	},
+
 	async getTaxClasses(this: ILoadOptionsFunctions) {
 		return lookupOptions.call(this, 'tax_classes', 'tax_class_id', (row) => String(row.title));
 	},
