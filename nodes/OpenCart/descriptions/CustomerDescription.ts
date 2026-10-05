@@ -362,6 +362,19 @@ export const customerFields: INodeProperties[] = [
 		default: 0,
 		description: 'Related order, 0 for none',
 	},
+	{
+		displayName: 'Notify Customer',
+		name: 'notify',
+		type: 'boolean',
+		displayOptions: {
+			show: {
+				resource: ['customer'],
+				operation: ['addTransaction', 'addReward'],
+			},
+		},
+		default: true,
+		description: 'Whether to send the e-mail the admin panel sends for this entry',
+	},
 	...listFields('customer', ['getAll', ...ENTRY_OPERATIONS]),
 
 	// Get Many
@@ -541,6 +554,7 @@ export function buildCustomerRequest(this: IExecuteFunctions, operation: string,
 				customer_id: customerId(),
 				description: this.getNodeParameter('entryDescription', i),
 				order_id: this.getNodeParameter('orderId', i, 0),
+				notify: this.getNodeParameter('notify', i, true),
 			};
 
 			if (operation === 'addTransaction') {

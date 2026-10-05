@@ -24,13 +24,13 @@ export const customerApprovalOperations: INodeProperties[] = [
 			{
 				name: 'Approve',
 				value: 'approve',
-				description: 'Approve a pending customer or affiliate (no e-mail is sent)',
+				description: 'Approve a pending customer or affiliate',
 				action: 'Approve a customer',
 			},
 			{
 				name: 'Deny',
 				value: 'deny',
-				description: 'Deny a pending customer or affiliate (no e-mail is sent)',
+				description: 'Deny a pending customer or affiliate',
 				action: 'Deny a customer',
 			},
 			{
@@ -67,6 +67,19 @@ export const customerApprovalFields: INodeProperties[] = [
 		},
 		default: 'customer',
 		description: 'Whether to decide on the customer account or on the affiliate request',
+	},
+	{
+		displayName: 'Notify Customer',
+		name: 'notify',
+		type: 'boolean',
+		displayOptions: {
+			show: {
+				resource: ['customer_approval'],
+				operation: ['approve', 'deny'],
+			},
+		},
+		default: true,
+		description: "Whether to send the admin panel's approve / deny e-mail",
 	},
 	languageField('customer_approval', ['getAll']),
 	...listFields('customer_approval'),
@@ -124,6 +137,7 @@ export function buildCustomerApprovalRequest(this: IExecuteFunctions, operation:
 			params: {
 				customer_id: this.getNodeParameter('customerId', i, undefined, { extractValue: true }),
 				type: this.getNodeParameter('type', i),
+				notify: this.getNodeParameter('notify', i, true),
 			},
 		};
 	}

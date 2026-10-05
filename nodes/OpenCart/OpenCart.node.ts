@@ -62,8 +62,10 @@ import {
 	productFields,
 	productOperations,
 } from './descriptions/ProductDescription';
+import { buildReturnRequest, returnFields, returnOperations } from './descriptions/ReturnDescription';
 import { buildReviewRequest, reviewFields, reviewOperations } from './descriptions/ReviewDescription';
 import { buildSystemRequest, systemFields, systemOperations } from './descriptions/SystemDescription';
+import { buildVoucherRequest, voucherFields, voucherOperations } from './descriptions/VoucherDescription';
 import { openCartApiRequest, openCartApiRequestAllItems } from './GenericFunctions';
 import { listSearch, loadOptions } from './LoadOptions';
 
@@ -86,8 +88,10 @@ const BUILDERS: Record<
 	option: buildOptionRequest,
 	order: buildOrderRequest,
 	product: buildProductRequest,
+	return: buildReturnRequest,
 	review: buildReviewRequest,
 	system: buildSystemRequest,
+	voucher: buildVoucherRequest,
 };
 
 /**
@@ -194,6 +198,10 @@ export class OpenCart implements INodeType {
 						value: 'filter_group',
 					},
 					{
+						name: 'Gift Voucher',
+						value: 'voucher',
+					},
+					{
 						name: 'Information Page',
 						value: 'information',
 					},
@@ -217,6 +225,10 @@ export class OpenCart implements INodeType {
 					{
 						name: 'Product',
 						value: 'product',
+					},
+					{
+						name: 'Return',
+						value: 'return',
 					},
 					{
 						name: 'Review',
@@ -257,10 +269,14 @@ export class OpenCart implements INodeType {
 			...orderFields,
 			...productOperations,
 			...productFields,
+			...returnOperations,
+			...returnFields,
 			...reviewOperations,
 			...reviewFields,
 			...systemOperations,
 			...systemFields,
+			...voucherOperations,
+			...voucherFields,
 		],
 	};
 
