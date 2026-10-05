@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "description": "n8n community node for OpenCart 3: manage catalog, customers, orders, returns, vouchers and marketing through the n8n API module",
     "license": "MIT",
-    "homepage": "",
+    "homepage": "https://github.com/and-co-ua/n8n-nodes-opencart#readme",
     "keywords": [
         "n8n-community-node-package",
         "n8n",
@@ -16,7 +16,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+        "url": "git+https://github.com/and-co-ua/n8n-nodes-opencart.git"
     },
     "scripts": {
         "build": "n8n-node build",
@@ -47,5 +47,8 @@
     },
     "peerDependencies": {
         "n8n-workflow": "*"
+    },
+    "bugs": {
+        "url": "https://github.com/and-co-ua/n8n-nodes-opencart/issues"
     }
 }
