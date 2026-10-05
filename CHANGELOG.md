@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-05
+
+### Added
+
+- Product resource: Create, Update, Get, Get Many (filters for sync), Copy, Delete.
+- Product → Bulk Update: one input item per product, matched by SKU, model or ID, sent in
+  batches of 500, one result item per input item.
+- Product picker with search (resource locator), also in Review → Create.
+- Lookup types and drop-downs for stock statuses, length classes and weight classes.
+
 ## [0.4.0] - 2026-10-05
 
 ### Added
