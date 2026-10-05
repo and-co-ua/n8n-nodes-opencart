@@ -55,6 +55,11 @@ import {
 	manufacturerOperations,
 } from './descriptions/ManufacturerDescription';
 import { buildOrderRequest, orderFields, orderOperations } from './descriptions/OrderDescription';
+import {
+	buildMarketingRequest,
+	marketingFields,
+	marketingOperations,
+} from './descriptions/MarketingDescription';
 import { buildOptionRequest, optionFields, optionOperations } from './descriptions/OptionDescription';
 import {
 	buildProductRequest,
@@ -85,6 +90,7 @@ const BUILDERS: Record<
 	information: buildInformationRequest,
 	lookup: buildLookupRequest,
 	manufacturer: buildManufacturerRequest,
+	marketing: buildMarketingRequest,
 	option: buildOptionRequest,
 	order: buildOrderRequest,
 	product: buildProductRequest,
@@ -215,6 +221,10 @@ export class OpenCart implements INodeType {
 						value: 'manufacturer',
 					},
 					{
+						name: 'Marketing Campaign',
+						value: 'marketing',
+					},
+					{
 						name: 'Option',
 						value: 'option',
 					},
@@ -263,6 +273,8 @@ export class OpenCart implements INodeType {
 			...lookupFields,
 			...manufacturerOperations,
 			...manufacturerFields,
+			...marketingOperations,
+			...marketingFields,
 			...optionOperations,
 			...optionFields,
 			...orderOperations,
