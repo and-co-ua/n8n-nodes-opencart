@@ -7,7 +7,7 @@ and maintenance tasks.
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/)
 workflow automation platform.
 
-> **Status:** early development (0.x). Available: catalog management, reference lists, connection check.
+> **Status:** early development (0.x). Available: products, catalog management, reference lists, connection check.
 
 [Installation](#installation) ·
 [Operations](#operations) ·
@@ -34,6 +34,7 @@ workflow automation platform.
 | Information Page | Create, Delete, Get, Get Many, Update | Pages like About Us or Delivery, with footer link, meta tags and SEO keyword. |
 | Manufacturer | Create, Delete, Get, Get Many, Update | Brands with image, SEO keyword and stores. |
 | Option | Create, Delete, Get, Get Many, Update | Product options (select, radio, checkbox, text, date, …) with their values. |
+| Product | Bulk Update, Copy, Create, Delete, Get, Get Many, Update | Products with prices, stock, descriptions, categories, attributes, options, discounts, specials, rewards, images (paths of existing files), related products and SEO keyword. Get Many filters for synchronisation: exact model / SKU, modified since, stock and price ranges, category with subcategories. |
 | Review | Create, Delete, Get, Get Many, Update | Product reviews; filter by product, author, status and date, publish or edit them. |
 | Lookup | Get Many | Reference lists: countries, currencies, customer groups, languages, layouts, order statuses, return actions, return reasons, return statuses, stores, tax classes, voucher themes, zones (optionally of one country). Translated lists accept a language. |
 | System | Ping | Check the connection; returns API and module versions, OpenCart and PHP versions, access mode, the way the key was received, store name and server time. |
@@ -41,12 +42,25 @@ workflow automation platform.
 Drop-downs for languages, countries, zones, statuses, categories, manufacturers and other
 reference data are loaded from the store.
 
+**Bulk Update** (Product) treats every input item as one product: choose how items are
+matched (SKU, model or product ID), map the match value and the fields to update (price,
+quantity, status, stock status, …) with expressions. The node sends the items in batches of
+500 and outputs one item per input item with `success` and, on failure, `error` — failed items
+do not stop the others. Typical use: price and stock sync from a spreadsheet or an ERP.
+
+**Product options** are set as JSON in the format of the API (see the module's `docs/API.md`):
+
+```json
+[{ "option_id": 5, "required": true,
+   "values": [{ "option_value_id": 39, "quantity": 10, "price": 2, "price_prefix": "+" }] }]
+```
+
 **Languages.** Texts (names, descriptions, meta tags, SEO keywords) are written in the
 language selected in the node (the store default when empty). A new record gets a copy of the
 text in all other languages until it is translated; an update changes only the selected
 language and only the fields you set.
 
-Planned: products, customers and customer groups, customer approvals, orders, returns, gift vouchers,
+Planned: customers and customer groups, customer approvals, orders, returns, gift vouchers,
 marketing campaigns, coupons, mailing, logs and maintenance tasks.
 
 ## Credentials
@@ -68,7 +82,7 @@ installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.4.0+).
+- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.5.0+).
 - Tested with the latest n8n release.
 
 ## Development

@@ -6,12 +6,10 @@ single source of truth — the node implements what is written there.
 
 ## Status
 
-- **Version:** 0.4.0
-- **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog (Attribute, Attribute Group,
-  Category, Download with binary upload, Filter Group, Information Page, Manufacturer, Option,
-  Review).
-- **Next:** stage 4 — Products (0.5.0): Product resource, product picker (`getProducts` /
-  resource locator for large catalogs), lookups for stock statuses and length/weight classes.
+- **Version:** 0.5.0
+- **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products (Product resource with
+  Bulk Update, product resource locator with `listSearch.searchProducts`, new lookups).
+- **Next:** stage 5 — Customers (0.6.0): Customer, Customer Group, Customer Approval.
 - **Not yet verified in a running n8n:** the credential test request (`test`) — run
   `npm run dev` and test the credentials manually.
 
@@ -35,7 +33,7 @@ OpenCart node ──POST JSON──► {store}/index.php?route=api/n8n
 ```
 nodes/OpenCart/OpenCart.node.ts     node description, buildRequest() (operation → API action + params), execute()
 nodes/OpenCart/GenericFunctions.ts  openCartApiRequest(), SUPPORTED_API_VERSION
-nodes/OpenCart/LoadOptions.ts       loadOptions methods (get<Lookup>), backed by lookup.* actions
+nodes/OpenCart/LoadOptions.ts       loadOptions (get<Lookup>/get<Entity>) and listSearch (searchProducts)
 nodes/OpenCart/descriptions/        <Resource>Description.ts: operations, fields, build<Resource>Request()
 nodes/OpenCart/descriptions/common.ts  ApiCall, languageField, listFields, sortOptions, listParams,
                                     descriptionItem, seoUrlItem, toApiDate
@@ -63,7 +61,12 @@ Every node and credential must be registered in `package.json` → `n8n.nodes` /
    Dates from `dateTime` fields go through `toApiDate()` (`endOfDay` for "to" filters).
    Files: read input binary with `assertBinaryData()` + `getBinaryDataBuffer()` and send
    `{ content: base64, name, mime_type }` (builders may be async).
-6. Errors: in `catch`, wrap with `NodeApiError`/`NodeOperationError` (the lint rule forbids
+6. Large entity sets (products) use a `resourceLocator` (`PRODUCT_LOCATOR`, list mode backed by
+   `listSearch`, paging via `paginationToken`) instead of `loadOptions`; read it with
+   `getNodeParameter(name, i, undefined, { extractValue: true })`.
+7. Operations that combine input items (Product → Bulk Update) are handled before the per-item
+   loop in `execute()` (`executeBulkUpdate`).
+8. Errors: in `catch`, wrap with `NodeApiError`/`NodeOperationError` (the lint rule forbids
    re-throwing the caught value; both constructors return an error of their own class unchanged).
 
 ## Commands
