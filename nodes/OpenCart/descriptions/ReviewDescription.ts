@@ -2,6 +2,7 @@ import type { IDataObject, IExecuteFunctions, INodeProperties } from 'n8n-workfl
 
 import type { ApiCall } from './common';
 import { languageField, listFields, listParams, sortOptions, toApiDate } from './common';
+import { PRODUCT_LOCATOR } from './ProductDescription';
 
 export const reviewOperations: INodeProperties[] = [
 	{
@@ -70,17 +71,13 @@ export const reviewFields: INodeProperties[] = [
 		default: 0,
 	},
 	{
-		displayName: 'Product ID',
-		name: 'productId',
-		type: 'number',
-		required: true,
+		...PRODUCT_LOCATOR,
 		displayOptions: {
 			show: {
 				resource: ['review'],
 				operation: ['create'],
 			},
 		},
-		default: 0,
 	},
 	{
 		displayName: 'Author',
@@ -234,7 +231,7 @@ export function buildReviewRequest(this: IExecuteFunctions, operation: string, i
 		operation === 'create'
 			? {
 					...(this.getNodeParameter('additionalFields', i, {}) as IDataObject),
-					productId: this.getNodeParameter('productId', i),
+					productId: this.getNodeParameter('productId', i, undefined, { extractValue: true }),
 					author: this.getNodeParameter('author', i),
 					text: this.getNodeParameter('text', i),
 					rating: this.getNodeParameter('rating', i),

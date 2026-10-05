@@ -44,10 +44,16 @@ import {
 	manufacturerOperations,
 } from './descriptions/ManufacturerDescription';
 import { buildOptionRequest, optionFields, optionOperations } from './descriptions/OptionDescription';
+import {
+	buildProductRequest,
+	bulkItem,
+	productFields,
+	productOperations,
+} from './descriptions/ProductDescription';
 import { buildReviewRequest, reviewFields, reviewOperations } from './descriptions/ReviewDescription';
 import { buildSystemRequest, systemFields, systemOperations } from './descriptions/SystemDescription';
 import { openCartApiRequest, openCartApiRequestAllItems } from './GenericFunctions';
-import { loadOptions } from './LoadOptions';
+import { listSearch, loadOptions } from './LoadOptions';
 
 /** Resource → builder of the API call (action + params) for one item. See docs/API.md of the module. */
 const BUILDERS: Record<
@@ -63,9 +69,53 @@ const BUILDERS: Record<
 	lookup: buildLookupRequest,
 	manufacturer: buildManufacturerRequest,
 	option: buildOptionRequest,
+	product: buildProductRequest,
 	review: buildReviewRequest,
 	system: buildSystemRequest,
 };
+
+/**
+ * Product → Bulk Update: every input item is one product. Items are sent in batches of 500
+ * (product.bulk_update) and each input item gets its own result item.
+ */
+async function executeBulkUpdate(this: IExecuteFunctions, count: number): Promise<INodeExecutionData[]> {
+	const batchSize = 500;
+	const output: INodeExecutionData[] = [];
+
+	for (let start = 0; start < count; start += batchSize) {
+		const end = Math.min(start + batchSize, count);
+		const payload: IDataObject[] = [];
+
+		try {
+			for (let i = start; i < end; i++) {
+				payload.push(bulkItem.call(this, i));
+			}
+
+			const { data } = await openCartApiRequest.call(this, 'product', 'bulk_update', { items: payload }, start);
+
+			for (const result of (data as IDataObject).results as IDataObject[]) {
+				const i = start + (result.index as number);
+				const { index, ...rest } = result;
+
+				output.push({ json: { ...payload[index as number], ...rest }, pairedItem: { item: i } });
+			}
+		} catch (error) {
+			if (!this.continueOnFail()) {
+				if (error instanceof NodeApiError) {
+					throw new NodeApiError(this.getNode(), error as unknown as JsonObject, { itemIndex: start });
+				}
+
+				throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: start });
+			}
+
+			for (let i = start; i < end; i++) {
+				output.push({ json: { error: (error as JsonObject).message as string }, pairedItem: { item: i } });
+			}
+		}
+	}
+
+	return output;
+}
 
 export class OpenCart implements INodeType {
 	description: INodeTypeDescription = {
@@ -133,6 +183,10 @@ export class OpenCart implements INodeType {
 						value: 'option',
 					},
 					{
+						name: 'Product',
+						value: 'product',
+					},
+					{
 						name: 'Review',
 						value: 'review',
 					},
@@ -161,6 +215,8 @@ export class OpenCart implements INodeType {
 			...manufacturerFields,
 			...optionOperations,
 			...optionFields,
+			...productOperations,
+			...productFields,
 			...reviewOperations,
 			...reviewFields,
 			...systemOperations,
@@ -170,11 +226,20 @@ export class OpenCart implements INodeType {
 
 	methods = {
 		loadOptions,
+		listSearch,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
+
+		if (
+			items.length > 0 &&
+			this.getNodeParameter('resource', 0) === 'product' &&
+			this.getNodeParameter('operation', 0) === 'bulkUpdate'
+		) {
+			return [await executeBulkUpdate.call(this, items.length)];
+		}
 
 		for (let i = 0; i < items.length; i++) {
 			try {

@@ -1,4 +1,9 @@
-import type { IDataObject, ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
+import type {
+	IDataObject,
+	ILoadOptionsFunctions,
+	INodeListSearchResult,
+	INodePropertyOptions,
+} from 'n8n-workflow';
 
 import { openCartApiRequest, openCartApiRequestAllItems } from './GenericFunctions';
 
@@ -166,5 +171,31 @@ export const loadOptions = {
 
 	async getLayouts(this: ILoadOptionsFunctions) {
 		return lookupOptions.call(this, 'layouts', 'layout_id', byName);
+	},
+};
+
+export const listSearch = {
+	/** Products by name, model or SKU, 50 per page, for the product resource locator. */
+	async searchProducts(
+		this: ILoadOptionsFunctions,
+		filter?: string,
+		paginationToken?: string,
+	): Promise<INodeListSearchResult> {
+		const start = paginationToken ? Number(paginationToken) : 0;
+		const limit = 50;
+		const { data, meta } = await openCartApiRequest.call(this, 'product', 'list', {
+			filter_search: filter ?? '',
+			sort: 'name',
+			start,
+			limit,
+		});
+
+		return {
+			results: (data as IDataObject[]).map((row) => ({
+				name: `${row.name} (${row.model})${row.status === false ? ' (disabled)' : ''}`,
+				value: String(row.product_id),
+			})),
+			paginationToken: start + limit < Number(meta.total ?? 0) ? String(start + limit) : undefined,
+		};
 	},
 };
