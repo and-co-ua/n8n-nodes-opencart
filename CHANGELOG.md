@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-05
+
+### Added
+
+- Catalog resources with Create, Delete, Get, Get Many and Update: Attribute, Attribute Group,
+  Category, Download (file from an input binary field), Filter Group, Information Page,
+  Manufacturer, Option (with values), Review.
+- Language selection for texts: one language per call, partial updates per language.
+- Get Many: Return All with automatic paging, Limit, filters and sorting.
+- Drop-downs loaded from the store for categories, manufacturers, attribute groups, attributes,
+  options, filter groups, filters, downloads and information pages.
+
 ## [0.3.0] - 2026-10-05
 
 ### Added
