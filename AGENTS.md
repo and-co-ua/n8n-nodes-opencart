@@ -6,12 +6,11 @@ single source of truth — the node implements what is written there.
 
 ## Status
 
-- **Version:** 0.6.0
-- **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products, 5 Customers
-  (Customer with history/transactions/rewards, Customer Group, Customer Approval, customer
-  resource locator with `listSearch.searchCustomers`).
-- **Next:** stage 6 — Sales (0.7.0): Order (+ status history), Return (+ history), Gift Voucher
-  (+ sending).
+- **Version:** 0.7.0
+- **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products, 5 Customers, 6 Sales
+  (Order with Create/Update/Quote through the store's checkout, Return, Gift Voucher, notify
+  options for e-mails).
+- **Next:** stage 7 — Marketing (0.8.0): Marketing, Coupon, Mail.
 - **Not yet verified in a running n8n:** the credential test request (`test`) — run
   `npm run dev` and test the credentials manually.
 

@@ -7,7 +7,7 @@ and maintenance tasks.
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/)
 workflow automation platform.
 
-> **Status:** early development (0.x). Available: products, catalog, customers, reference lists, connection check.
+> **Status:** early development (0.x). Available: orders, returns, gift vouchers, products, catalog, customers, reference lists, connection check.
 
 [Installation](#installation) ·
 [Operations](#operations) ·
@@ -34,10 +34,13 @@ workflow automation platform.
 | Customer Group | Create, Delete, Get, Get Many, Update | Customer groups with approval setting. |
 | Download | Create, Delete, Get, Get Many, Update | Downloadable files for products; the file is uploaded from an input binary field. |
 | Filter Group | Create, Delete, Get, Get Many, Update | Filter groups with their filters (layered navigation). |
+| Gift Voucher | Create, Delete, Get, Get History, Get Many, Send, Update | Gift vouchers with balance, usage history and e-mail to the recipient. |
 | Information Page | Create, Delete, Get, Get Many, Update | Pages like About Us or Delivery, with footer link, meta tags and SEO keyword. |
 | Manufacturer | Create, Delete, Get, Get Many, Update | Brands with image, SEO keyword and stores. |
 | Option | Create, Delete, Get, Get Many, Update | Product options (select, radio, checkbox, text, date, …) with their values. |
+| Order | Create, Update, Quote, Get, Get Many, Delete, Add / Get History, Create Invoice Number, Add / Remove Reward Points, Add / Remove Commission | Full order management through the store's own checkout: products with options, guest or registered customer, addresses, shipping and payment methods (codes from Quote), coupon, gift vouchers, reward points. Status changes subtract / return stock and send the store's e-mails as in the admin panel. |
 | Product | Bulk Update, Copy, Create, Delete, Get, Get Many, Update | Products with prices, stock, descriptions, categories, attributes, options, discounts, specials, rewards, images (paths of existing files), related products and SEO keyword. Get Many filters for synchronisation: exact model / SKU, modified since, stock and price ranges, category with subcategories. |
+| Return | Create, Delete, Get, Get Many, Update, Add / Get History | Product returns; customer and product data are taken from the order; status changes can e-mail the customer. |
 | Review | Create, Delete, Get, Get Many, Update | Product reviews; filter by product, author, status and date, publish or edit them. |
 | Lookup | Get Many | Reference lists: countries, currencies, customer groups, languages, layouts, order statuses, return actions, return reasons, return statuses, stores, tax classes, voucher themes, zones (optionally of one country). Translated lists accept a language. |
 | System | Ping | Check the connection; returns API and module versions, OpenCart and PHP versions, access mode, the way the key was received, store name and server time. |
@@ -58,13 +61,17 @@ do not stop the others. Typical use: price and stock sync from a spreadsheet or 
    "values": [{ "option_value_id": 39, "quantity": 10, "price": 2, "price_prefix": "+" }] }]
 ```
 
+**Orders.** Use **Quote** first to see which shipping and payment method codes the store offers
+for the products and address, then **Create** with those codes. **Update** changes only what
+you set (products and gift vouchers replace the lists); it does not send the store's order
+e-mails again unless *Notify Customer* is on.
+
 **Languages.** Texts (names, descriptions, meta tags, SEO keywords) are written in the
 language selected in the node (the store default when empty). A new record gets a copy of the
 text in all other languages until it is translated; an update changes only the selected
 language and only the fields you set.
 
-Planned: orders, returns, gift vouchers,
-marketing campaigns, coupons, mailing, logs and maintenance tasks.
+Planned: marketing campaigns, coupons, mailing, logs and maintenance tasks.
 
 ## Credentials
 
@@ -85,7 +92,7 @@ installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.6.0+).
+- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.7.0+).
 - Tested with the latest n8n release.
 
 ## Development
