@@ -39,6 +39,7 @@ import {
 	manufacturerOperations,
 } from './descriptions/ManufacturerDescription';
 import { buildOptionRequest, optionFields, optionOperations } from './descriptions/OptionDescription';
+import { buildReviewRequest, reviewFields, reviewOperations } from './descriptions/ReviewDescription';
 import { buildSystemRequest, systemFields, systemOperations } from './descriptions/SystemDescription';
 import { openCartApiRequest, openCartApiRequestAllItems } from './GenericFunctions';
 import { loadOptions } from './LoadOptions';
@@ -56,6 +57,7 @@ const BUILDERS: Record<
 	lookup: buildLookupRequest,
 	manufacturer: buildManufacturerRequest,
 	option: buildOptionRequest,
+	review: buildReviewRequest,
 	system: buildSystemRequest,
 };
 
@@ -121,6 +123,10 @@ export class OpenCart implements INodeType {
 						value: 'option',
 					},
 					{
+						name: 'Review',
+						value: 'review',
+					},
+					{
 						name: 'System',
 						value: 'system',
 					},
@@ -143,6 +149,8 @@ export class OpenCart implements INodeType {
 			...manufacturerFields,
 			...optionOperations,
 			...optionFields,
+			...reviewOperations,
+			...reviewFields,
 			...systemOperations,
 			...systemFields,
 		],

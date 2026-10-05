@@ -164,3 +164,28 @@ export function seoUrlItem(this: IExecuteFunctions, i: number, keyword: unknown)
 
 	return [item];
 }
+
+/**
+ * n8n dateTime value (ISO 8601) → API date "YYYY-MM-DD HH:MM:SS" (store local time, no zone shift).
+ * With endOfDay a midnight value (what the date picker gives) becomes the date alone, which "to"
+ * filters treat as the end of that day.
+ */
+export function toApiDate(value: unknown, endOfDay = false): string | undefined {
+	if (typeof value !== 'string' || value === '') {
+		return undefined;
+	}
+
+	const match = /^(\d{4}-\d{2}-\d{2})(?:[T ](\d{2}:\d{2}(?::\d{2})?))?/.exec(value);
+
+	if (!match) {
+		return value;
+	}
+
+	const time = match[2] ? (match[2].length === 5 ? `${match[2]}:00` : match[2]) : '00:00:00';
+
+	if (endOfDay && time === '00:00:00') {
+		return match[1];
+	}
+
+	return `${match[1]} ${time}`;
+}
