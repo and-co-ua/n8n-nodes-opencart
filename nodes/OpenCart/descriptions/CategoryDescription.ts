@@ -76,6 +76,15 @@ const categoryFieldOptions: INodeProperties[] = [
 		description: 'HTML description in the selected language',
 	},
 	{
+		displayName: 'Filter Names or IDs',
+		name: 'filterIds',
+		type: 'multiOptions',
+		typeOptions: { loadOptionsMethod: 'getFilters' },
+		default: [],
+		description:
+			'Filters shown in the category (replaces the current list). Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+	},
+	{
 		displayName: 'Image',
 		name: 'image',
 		type: 'string',
@@ -334,6 +343,7 @@ export function buildCategoryRequest(this: IExecuteFunctions, operation: string,
 		sortOrder: 'sort_order',
 		status: 'status',
 		storeIds: 'stores',
+		filterIds: 'filters',
 	};
 
 	for (const [nodeName, apiName] of Object.entries(scalars)) {

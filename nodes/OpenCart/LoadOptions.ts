@@ -119,6 +119,24 @@ export const loadOptions = {
 		return rows.map((row) => ({ name: `${row.name} (${row.type})`, value: row.option_id as number }));
 	},
 
+	async getFilterGroups(this: ILoadOptionsFunctions) {
+		const rows = await openCartApiRequestAllItems.call(this, 'filter_group', 'list', { sort: 'name' });
+
+		return rows.map((row) => ({ name: String(row.name), value: row.filter_group_id as number }));
+	},
+
+	/** Filters of all groups as "Group > Filter". */
+	async getFilters(this: ILoadOptionsFunctions) {
+		const rows = await openCartApiRequestAllItems.call(this, 'filter_group', 'list', { sort: 'name' });
+
+		return rows.flatMap((group) =>
+			(group.filters as IDataObject[]).map((filter) => ({
+				name: `${group.name} > ${filter.name}`,
+				value: filter.filter_id as number,
+			})),
+		);
+	},
+
 	async getLayouts(this: ILoadOptionsFunctions) {
 		return lookupOptions.call(this, 'layouts', 'layout_id', byName);
 	},

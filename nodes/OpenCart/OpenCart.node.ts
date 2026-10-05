@@ -22,6 +22,11 @@ import {
 	categoryOperations,
 } from './descriptions/CategoryDescription';
 import type { ApiCall } from './descriptions/common';
+import {
+	buildFilterGroupRequest,
+	filterGroupFields,
+	filterGroupOperations,
+} from './descriptions/FilterGroupDescription';
 import { buildLookupRequest, lookupFields, lookupOperations } from './descriptions/LookupDescription';
 import {
 	buildManufacturerRequest,
@@ -41,6 +46,7 @@ const BUILDERS: Record<
 	attribute: buildAttributeRequest,
 	attribute_group: buildAttributeGroupRequest,
 	category: buildCategoryRequest,
+	filter_group: buildFilterGroupRequest,
 	lookup: buildLookupRequest,
 	manufacturer: buildManufacturerRequest,
 	option: buildOptionRequest,
@@ -88,6 +94,10 @@ export class OpenCart implements INodeType {
 						value: 'category',
 					},
 					{
+						name: 'Filter Group',
+						value: 'filter_group',
+					},
+					{
 						name: 'Lookup',
 						value: 'lookup',
 						description: 'Reference lists: languages, statuses, countries and more',
@@ -113,6 +123,8 @@ export class OpenCart implements INodeType {
 			...attributeGroupFields,
 			...categoryOperations,
 			...categoryFields,
+			...filterGroupOperations,
+			...filterGroupFields,
 			...lookupOperations,
 			...lookupFields,
 			...manufacturerOperations,
