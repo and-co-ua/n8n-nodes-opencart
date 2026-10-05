@@ -113,6 +113,12 @@ export const loadOptions = {
 		return rows.map((row) => ({ name: String(row.name), value: row.manufacturer_id as number }));
 	},
 
+	async getOptions(this: ILoadOptionsFunctions) {
+		const rows = await openCartApiRequestAllItems.call(this, 'option', 'list', { sort: 'name' });
+
+		return rows.map((row) => ({ name: `${row.name} (${row.type})`, value: row.option_id as number }));
+	},
+
 	async getLayouts(this: ILoadOptionsFunctions) {
 		return lookupOptions.call(this, 'layouts', 'layout_id', byName);
 	},

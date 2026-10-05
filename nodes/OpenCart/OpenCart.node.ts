@@ -28,6 +28,7 @@ import {
 	manufacturerFields,
 	manufacturerOperations,
 } from './descriptions/ManufacturerDescription';
+import { buildOptionRequest, optionFields, optionOperations } from './descriptions/OptionDescription';
 import { buildSystemRequest, systemFields, systemOperations } from './descriptions/SystemDescription';
 import { openCartApiRequest, openCartApiRequestAllItems } from './GenericFunctions';
 import { loadOptions } from './LoadOptions';
@@ -42,6 +43,7 @@ const BUILDERS: Record<
 	category: buildCategoryRequest,
 	lookup: buildLookupRequest,
 	manufacturer: buildManufacturerRequest,
+	option: buildOptionRequest,
 	system: buildSystemRequest,
 };
 
@@ -95,6 +97,10 @@ export class OpenCart implements INodeType {
 						value: 'manufacturer',
 					},
 					{
+						name: 'Option',
+						value: 'option',
+					},
+					{
 						name: 'System',
 						value: 'system',
 					},
@@ -111,6 +117,8 @@ export class OpenCart implements INodeType {
 			...lookupFields,
 			...manufacturerOperations,
 			...manufacturerFields,
+			...optionOperations,
+			...optionFields,
 			...systemOperations,
 			...systemFields,
 		],
