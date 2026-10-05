@@ -15,6 +15,11 @@ import {
 } from './descriptions/CategoryDescription';
 import type { ApiCall } from './descriptions/common';
 import { buildLookupRequest, lookupFields, lookupOperations } from './descriptions/LookupDescription';
+import {
+	buildManufacturerRequest,
+	manufacturerFields,
+	manufacturerOperations,
+} from './descriptions/ManufacturerDescription';
 import { buildSystemRequest, systemFields, systemOperations } from './descriptions/SystemDescription';
 import { openCartApiRequest, openCartApiRequestAllItems } from './GenericFunctions';
 import { loadOptions } from './LoadOptions';
@@ -26,6 +31,7 @@ const BUILDERS: Record<
 > = {
 	category: buildCategoryRequest,
 	lookup: buildLookupRequest,
+	manufacturer: buildManufacturerRequest,
 	system: buildSystemRequest,
 };
 
@@ -67,6 +73,10 @@ export class OpenCart implements INodeType {
 						description: 'Reference lists: languages, statuses, countries and more',
 					},
 					{
+						name: 'Manufacturer',
+						value: 'manufacturer',
+					},
+					{
 						name: 'System',
 						value: 'system',
 					},
@@ -77,6 +87,8 @@ export class OpenCart implements INodeType {
 			...categoryFields,
 			...lookupOperations,
 			...lookupFields,
+			...manufacturerOperations,
+			...manufacturerFields,
 			...systemOperations,
 			...systemFields,
 		],

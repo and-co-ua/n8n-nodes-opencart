@@ -91,6 +91,12 @@ export const loadOptions = {
 		return [{ name: '(Top Level)', value: 0 }, ...(await loadOptions.getCategories.call(this))];
 	},
 
+	async getManufacturers(this: ILoadOptionsFunctions) {
+		const rows = await openCartApiRequestAllItems.call(this, 'manufacturer', 'list', { sort: 'name' });
+
+		return rows.map((row) => ({ name: String(row.name), value: row.manufacturer_id as number }));
+	},
+
 	async getLayouts(this: ILoadOptionsFunctions) {
 		return lookupOptions.call(this, 'layouts', 'layout_id', byName);
 	},
