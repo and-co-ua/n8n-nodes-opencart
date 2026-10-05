@@ -8,15 +8,40 @@ import type {
 } from 'n8n-workflow';
 import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
+import { lookupFields, lookupOperations } from './descriptions/LookupDescription';
 import { systemFields, systemOperations } from './descriptions/SystemDescription';
 import { openCartApiRequest } from './GenericFunctions';
+import { loadOptions } from './LoadOptions';
 
-/** Node operation → API action (snake_case, see docs/API.md of the module). */
-const ACTIONS: Record<string, Record<string, string>> = {
-	system: {
-		ping: 'ping',
-	},
-};
+/**
+ * Builds the API action and params for one item (see docs/API.md of the module).
+ */
+function buildRequest(
+	this: IExecuteFunctions,
+	resource: string,
+	operation: string,
+	i: number,
+): { action: string; params: IDataObject } {
+	if (resource === 'lookup') {
+		// The Type value is the lookup action; the extra parameters are shown only where they apply
+		const action = this.getNodeParameter('type', i) as string;
+		const params: IDataObject = {};
+		const countryId = this.getNodeParameter('countryId', i, '') as string | number;
+		const languageId = this.getNodeParameter('languageId', i, '') as string | number;
+
+		if (action === 'zones' && countryId !== '') {
+			params.country_id = countryId;
+		}
+
+		if (languageId !== '') {
+			params.language_id = languageId;
+		}
+
+		return { action, params };
+	}
+
+	return { action: operation, params: {} };
+}
 
 export class OpenCart implements INodeType {
 	description: INodeTypeDescription = {
@@ -47,15 +72,26 @@ export class OpenCart implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Lookup',
+						value: 'lookup',
+						description: 'Reference lists: languages, statuses, countries and more',
+					},
+					{
 						name: 'System',
 						value: 'system',
 					},
 				],
 				default: 'system',
 			},
+			...lookupOperations,
+			...lookupFields,
 			...systemOperations,
 			...systemFields,
 		],
+	};
+
+	methods = {
+		loadOptions,
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -66,9 +102,9 @@ export class OpenCart implements INodeType {
 			try {
 				const resource = this.getNodeParameter('resource', i) as string;
 				const operation = this.getNodeParameter('operation', i) as string;
-				const action = ACTIONS[resource][operation];
+				const { action, params } = buildRequest.call(this, resource, operation, i);
 
-				const { data } = await openCartApiRequest.call(this, resource, action, {}, i);
+				const { data } = await openCartApiRequest.call(this, resource, action, params, i);
 
 				const rows = Array.isArray(data) ? data : [data ?? {}];
 

@@ -1,0 +1,82 @@
+import type { IDataObject, ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
+
+import { openCartApiRequest } from './GenericFunctions';
+
+/** Turns a lookup.* list into drop-down options. Disabled records are marked in the label. */
+async function lookupOptions(
+	this: ILoadOptionsFunctions,
+	action: string,
+	idField: string,
+	label: (row: IDataObject) => string,
+	params: IDataObject = {},
+): Promise<INodePropertyOptions[]> {
+	const { data } = await openCartApiRequest.call(this, 'lookup', action, params);
+
+	return (data as IDataObject[]).map((row) => ({
+		name: row.status === false ? `${label(row)} (disabled)` : label(row),
+		value: row[idField] as number,
+	}));
+}
+
+const byName = (row: IDataObject) => String(row.name);
+
+export const loadOptions = {
+	async getLanguages(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'languages', 'language_id', (row) => `${row.name} (${row.code})`);
+	},
+
+	async getStores(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'stores', 'store_id', byName);
+	},
+
+	async getCurrencies(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'currencies', 'currency_id', (row) => `${row.title} (${row.code})`);
+	},
+
+	async getOrderStatuses(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'order_statuses', 'order_status_id', byName);
+	},
+
+	async getReturnStatuses(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'return_statuses', 'return_status_id', byName);
+	},
+
+	async getReturnReasons(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'return_reasons', 'return_reason_id', byName);
+	},
+
+	async getReturnActions(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'return_actions', 'return_action_id', byName);
+	},
+
+	async getCustomerGroups(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'customer_groups', 'customer_group_id', byName);
+	},
+
+	async getCountries(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'countries', 'country_id', byName);
+	},
+
+	/** Zones of the country selected in the `countryId` parameter; empty until a country is chosen. */
+	async getZones(this: ILoadOptionsFunctions) {
+		const countryId = this.getCurrentNodeParameter('countryId');
+
+		if (!countryId) {
+			return [];
+		}
+
+		return lookupOptions.call(this, 'zones', 'zone_id', byName, { country_id: countryId as number });
+	},
+
+	async getTaxClasses(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'tax_classes', 'tax_class_id', (row) => String(row.title));
+	},
+
+	async getVoucherThemes(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'voucher_themes', 'voucher_theme_id', byName);
+	},
+
+	async getLayouts(this: ILoadOptionsFunctions) {
+		return lookupOptions.call(this, 'layouts', 'layout_id', byName);
+	},
+};
