@@ -7,7 +7,7 @@ and maintenance tasks.
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/)
 workflow automation platform.
 
-> **Status:** early development (0.x). Available: products, catalog management, reference lists, connection check.
+> **Status:** early development (0.x). Available: products, catalog, customers, reference lists, connection check.
 
 [Installation](#installation) ·
 [Operations](#operations) ·
@@ -29,6 +29,9 @@ workflow automation platform.
 | Attribute | Create, Delete, Get, Get Many, Update | Product attributes (e.g. "Diagonal") within attribute groups. |
 | Attribute Group | Create, Delete, Get, Get Many, Update | Groups of attributes (e.g. "Display"). |
 | Category | Create, Delete, Get, Get Many, Update | Categories with parent, description, meta tags, SEO keyword, stores, filters, top menu settings. Delete also removes subcategories. |
+| Customer | Create, Delete, Get, Get Many, Update, Add / Get History, Add / Get Transactions, Add / Get Reward Points | Customers with addresses, custom fields, password (works for the storefront login; random when not set), store credit and reward points with balances. |
+| Customer Approval | Approve, Deny, Get Many | Pending new customers and affiliates (no e-mail is sent). |
+| Customer Group | Create, Delete, Get, Get Many, Update | Customer groups with approval setting. |
 | Download | Create, Delete, Get, Get Many, Update | Downloadable files for products; the file is uploaded from an input binary field. |
 | Filter Group | Create, Delete, Get, Get Many, Update | Filter groups with their filters (layered navigation). |
 | Information Page | Create, Delete, Get, Get Many, Update | Pages like About Us or Delivery, with footer link, meta tags and SEO keyword. |
@@ -60,7 +63,7 @@ language selected in the node (the store default when empty). A new record gets 
 text in all other languages until it is translated; an update changes only the selected
 language and only the fields you set.
 
-Planned: customers and customer groups, customer approvals, orders, returns, gift vouchers,
+Planned: orders, returns, gift vouchers,
 marketing campaigns, coupons, mailing, logs and maintenance tasks.
 
 ## Credentials
@@ -82,7 +85,7 @@ installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.5.0+).
+- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.6.0+).
 - Tested with the latest n8n release.
 
 ## Development

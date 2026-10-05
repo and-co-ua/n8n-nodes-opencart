@@ -6,10 +6,12 @@ single source of truth — the node implements what is written there.
 
 ## Status
 
-- **Version:** 0.5.0
-- **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products (Product resource with
-  Bulk Update, product resource locator with `listSearch.searchProducts`, new lookups).
-- **Next:** stage 5 — Customers (0.6.0): Customer, Customer Group, Customer Approval.
+- **Version:** 0.6.0
+- **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products, 5 Customers
+  (Customer with history/transactions/rewards, Customer Group, Customer Approval, customer
+  resource locator with `listSearch.searchCustomers`).
+- **Next:** stage 6 — Sales (0.7.0): Order (+ status history), Return (+ history), Gift Voucher
+  (+ sending).
 - **Not yet verified in a running n8n:** the credential test request (`test`) — run
   `npm run dev` and test the credentials manually.
 
@@ -33,7 +35,7 @@ OpenCart node ──POST JSON──► {store}/index.php?route=api/n8n
 ```
 nodes/OpenCart/OpenCart.node.ts     node description, buildRequest() (operation → API action + params), execute()
 nodes/OpenCart/GenericFunctions.ts  openCartApiRequest(), SUPPORTED_API_VERSION
-nodes/OpenCart/LoadOptions.ts       loadOptions (get<Lookup>/get<Entity>) and listSearch (searchProducts)
+nodes/OpenCart/LoadOptions.ts       loadOptions (get<Lookup>/get<Entity>) and listSearch (searchProducts, searchCustomers)
 nodes/OpenCart/descriptions/        <Resource>Description.ts: operations, fields, build<Resource>Request()
 nodes/OpenCart/descriptions/common.ts  ApiCall, languageField, listFields, sortOptions, listParams,
                                     descriptionItem, seoUrlItem, toApiDate
