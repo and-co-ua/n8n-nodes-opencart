@@ -1,4 +1,6 @@
-import type { INodeProperties } from 'n8n-workflow';
+import type { IDataObject, IExecuteFunctions, INodeProperties } from 'n8n-workflow';
+
+import type { ApiCall } from './common';
 
 /** Lookup types that return translated names and accept language_id. */
 const TRANSLATED = [
@@ -100,3 +102,21 @@ export const lookupFields: INodeProperties[] = [
 		default: '',
 	},
 ];
+
+export function buildLookupRequest(this: IExecuteFunctions, _operation: string, i: number): ApiCall {
+	// The Type value is the lookup action; the extra parameters are shown only where they apply
+	const action = this.getNodeParameter('type', i) as string;
+	const params: IDataObject = {};
+	const countryId = this.getNodeParameter('countryId', i, '') as string | number;
+	const languageId = this.getNodeParameter('languageId', i, '') as string | number;
+
+	if (action === 'zones' && countryId !== '') {
+		params.country_id = countryId;
+	}
+
+	if (languageId !== '') {
+		params.language_id = languageId;
+	}
+
+	return { action, params };
+}

@@ -105,3 +105,36 @@ export async function openCartApiRequest(
 
 	return { data: body.data, meta: body.meta ?? {} };
 }
+
+/**
+ * Calls a list action page by page (1000 records per request) and returns all records.
+ */
+export async function openCartApiRequestAllItems(
+	this: IExecuteFunctions | ILoadOptionsFunctions,
+	resource: string,
+	action: string,
+	params: IDataObject = {},
+	itemIndex = 0,
+): Promise<IDataObject[]> {
+	const limit = 1000;
+	const items: IDataObject[] = [];
+	let start = 0;
+
+	for (;;) {
+		const { data, meta } = await openCartApiRequest.call(
+			this,
+			resource,
+			action,
+			{ ...params, start, limit },
+			itemIndex,
+		);
+		const rows = data as IDataObject[];
+
+		items.push(...rows);
+		start += limit;
+
+		if (rows.length < limit || start >= Number(meta.total ?? 0)) {
+			return items;
+		}
+	}
+}

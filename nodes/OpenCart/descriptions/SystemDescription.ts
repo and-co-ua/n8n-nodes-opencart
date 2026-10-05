@@ -1,4 +1,6 @@
-import type { INodeProperties } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeProperties } from 'n8n-workflow';
+
+import type { ApiCall } from './common';
 
 export const systemOperations: INodeProperties[] = [
 	{
@@ -24,3 +26,7 @@ export const systemOperations: INodeProperties[] = [
 ];
 
 export const systemFields: INodeProperties[] = [];
+
+export function buildSystemRequest(this: IExecuteFunctions, operation: string): ApiCall {
+	return { action: operation, params: {} };
+}

@@ -8,40 +8,26 @@ import type {
 } from 'n8n-workflow';
 import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
-import { lookupFields, lookupOperations } from './descriptions/LookupDescription';
-import { systemFields, systemOperations } from './descriptions/SystemDescription';
-import { openCartApiRequest } from './GenericFunctions';
+import {
+	buildCategoryRequest,
+	categoryFields,
+	categoryOperations,
+} from './descriptions/CategoryDescription';
+import type { ApiCall } from './descriptions/common';
+import { buildLookupRequest, lookupFields, lookupOperations } from './descriptions/LookupDescription';
+import { buildSystemRequest, systemFields, systemOperations } from './descriptions/SystemDescription';
+import { openCartApiRequest, openCartApiRequestAllItems } from './GenericFunctions';
 import { loadOptions } from './LoadOptions';
 
-/**
- * Builds the API action and params for one item (see docs/API.md of the module).
- */
-function buildRequest(
-	this: IExecuteFunctions,
-	resource: string,
-	operation: string,
-	i: number,
-): { action: string; params: IDataObject } {
-	if (resource === 'lookup') {
-		// The Type value is the lookup action; the extra parameters are shown only where they apply
-		const action = this.getNodeParameter('type', i) as string;
-		const params: IDataObject = {};
-		const countryId = this.getNodeParameter('countryId', i, '') as string | number;
-		const languageId = this.getNodeParameter('languageId', i, '') as string | number;
-
-		if (action === 'zones' && countryId !== '') {
-			params.country_id = countryId;
-		}
-
-		if (languageId !== '') {
-			params.language_id = languageId;
-		}
-
-		return { action, params };
-	}
-
-	return { action: operation, params: {} };
-}
+/** Resource → builder of the API call (action + params) for one item. See docs/API.md of the module. */
+const BUILDERS: Record<
+	string,
+	(this: IExecuteFunctions, operation: string, i: number) => ApiCall
+> = {
+	category: buildCategoryRequest,
+	lookup: buildLookupRequest,
+	system: buildSystemRequest,
+};
 
 export class OpenCart implements INodeType {
 	description: INodeTypeDescription = {
@@ -72,6 +58,10 @@ export class OpenCart implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Category',
+						value: 'category',
+					},
+					{
 						name: 'Lookup',
 						value: 'lookup',
 						description: 'Reference lists: languages, statuses, countries and more',
@@ -81,8 +71,10 @@ export class OpenCart implements INodeType {
 						value: 'system',
 					},
 				],
-				default: 'system',
+				default: 'category',
 			},
+			...categoryOperations,
+			...categoryFields,
 			...lookupOperations,
 			...lookupFields,
 			...systemOperations,
@@ -102,9 +94,19 @@ export class OpenCart implements INodeType {
 			try {
 				const resource = this.getNodeParameter('resource', i) as string;
 				const operation = this.getNodeParameter('operation', i) as string;
-				const { action, params } = buildRequest.call(this, resource, operation, i);
+				const call = BUILDERS[resource].call(this, operation, i);
 
-				const { data } = await openCartApiRequest.call(this, resource, action, params, i);
+				let data: unknown;
+
+				if (call.list && this.getNodeParameter('returnAll', i, false)) {
+					data = await openCartApiRequestAllItems.call(this, resource, call.action, call.params, i);
+				} else {
+					if (call.list) {
+						call.params.limit = this.getNodeParameter('limit', i, 50);
+					}
+
+					({ data } = await openCartApiRequest.call(this, resource, call.action, call.params, i));
+				}
 
 				const rows = Array.isArray(data) ? data : [data ?? {}];
 

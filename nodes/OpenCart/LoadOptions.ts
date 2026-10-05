@@ -1,6 +1,6 @@
 import type { IDataObject, ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
 
-import { openCartApiRequest } from './GenericFunctions';
+import { openCartApiRequest, openCartApiRequestAllItems } from './GenericFunctions';
 
 /** Turns a lookup.* list into drop-down options. Disabled records are marked in the label. */
 async function lookupOptions(
@@ -74,6 +74,21 @@ export const loadOptions = {
 
 	async getVoucherThemes(this: ILoadOptionsFunctions) {
 		return lookupOptions.call(this, 'voucher_themes', 'voucher_theme_id', byName);
+	},
+
+	/** All categories by path ("Desktops > Mac"). */
+	async getCategories(this: ILoadOptionsFunctions) {
+		const rows = await openCartApiRequestAllItems.call(this, 'category', 'list', { sort: 'name' });
+
+		return rows.map((row) => ({
+			name: row.status === false ? `${row.path} (disabled)` : String(row.path),
+			value: row.category_id as number,
+		}));
+	},
+
+	/** Categories with "(Top Level)" = 0 first, for parent selection. */
+	async getParentCategories(this: ILoadOptionsFunctions) {
+		return [{ name: '(Top Level)', value: 0 }, ...(await loadOptions.getCategories.call(this))];
 	},
 
 	async getLayouts(this: ILoadOptionsFunctions) {
