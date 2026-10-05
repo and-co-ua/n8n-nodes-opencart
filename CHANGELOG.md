@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-05
+
+### Added
+
+- Order resource: Create, Update and Quote through the store's checkout, Get, Get Many, Delete,
+  Add / Get History, Create Invoice Number, Add / Remove Reward Points, Add / Remove Commission.
+- Return resource: Create, Delete, Get, Get Many, Update, Add / Get History.
+- Gift Voucher resource: Create, Delete, Get, Get History, Get Many, Send, Update.
+- Notify Customer option for customer transactions, reward points and approvals.
+
 ## [0.6.0] - 2026-10-05
 
 ### Added
