@@ -119,6 +119,12 @@ export const loadOptions = {
 		return rows.map((row) => ({ name: `${row.name} (${row.type})`, value: row.option_id as number }));
 	},
 
+	async getDownloads(this: ILoadOptionsFunctions) {
+		const rows = await openCartApiRequestAllItems.call(this, 'download', 'list', { sort: 'name' });
+
+		return rows.map((row) => ({ name: `${row.name} (${row.mask})`, value: row.download_id as number }));
+	},
+
 	async getFilterGroups(this: ILoadOptionsFunctions) {
 		const rows = await openCartApiRequestAllItems.call(this, 'filter_group', 'list', { sort: 'name' });
 

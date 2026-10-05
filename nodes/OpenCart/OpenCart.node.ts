@@ -23,6 +23,11 @@ import {
 } from './descriptions/CategoryDescription';
 import type { ApiCall } from './descriptions/common';
 import {
+	buildDownloadRequest,
+	downloadFields,
+	downloadOperations,
+} from './descriptions/DownloadDescription';
+import {
 	buildFilterGroupRequest,
 	filterGroupFields,
 	filterGroupOperations,
@@ -41,11 +46,12 @@ import { loadOptions } from './LoadOptions';
 /** Resource → builder of the API call (action + params) for one item. See docs/API.md of the module. */
 const BUILDERS: Record<
 	string,
-	(this: IExecuteFunctions, operation: string, i: number) => ApiCall
+	(this: IExecuteFunctions, operation: string, i: number) => ApiCall | Promise<ApiCall>
 > = {
 	attribute: buildAttributeRequest,
 	attribute_group: buildAttributeGroupRequest,
 	category: buildCategoryRequest,
+	download: buildDownloadRequest,
 	filter_group: buildFilterGroupRequest,
 	lookup: buildLookupRequest,
 	manufacturer: buildManufacturerRequest,
@@ -94,6 +100,10 @@ export class OpenCart implements INodeType {
 						value: 'category',
 					},
 					{
+						name: 'Download',
+						value: 'download',
+					},
+					{
 						name: 'Filter Group',
 						value: 'filter_group',
 					},
@@ -123,6 +133,8 @@ export class OpenCart implements INodeType {
 			...attributeGroupFields,
 			...categoryOperations,
 			...categoryFields,
+			...downloadOperations,
+			...downloadFields,
 			...filterGroupOperations,
 			...filterGroupFields,
 			...lookupOperations,
@@ -148,7 +160,7 @@ export class OpenCart implements INodeType {
 			try {
 				const resource = this.getNodeParameter('resource', i) as string;
 				const operation = this.getNodeParameter('operation', i) as string;
-				const call = BUILDERS[resource].call(this, operation, i);
+				const call = await BUILDERS[resource].call(this, operation, i);
 
 				let data: unknown;
 
