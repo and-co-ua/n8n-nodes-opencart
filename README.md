@@ -8,8 +8,6 @@ OpenCart.
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/)
 workflow automation platform.
 
-> **Status:** early development (0.x). Available: orders, returns, gift vouchers, products, catalog, customers, marketing, mailing, logs, maintenance, image resizing, reference lists, connection check.
-
 [Installation](#installation) ·
 [Operations](#operations) ·
 [Credentials](#credentials) ·
@@ -135,7 +133,7 @@ installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x – 3.0.5.1. Full API: the n8n API extension (API version 1, module 0.9.0+); Standard
+- OpenCart 3.0.3.x – 3.0.5.1. Full API: the n8n API extension (API version 1, module 1.0.0+); Standard
   OpenCart API: an enabled API user.
 - Tested with the latest n8n release.
 

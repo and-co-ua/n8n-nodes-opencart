@@ -43,12 +43,14 @@
 #
 # ─── RELEASE PROCESS ───────────────────────────────────────────────────────────
 #
-# Run the following command locally to start an interactive release:
+# Releases are prepared by hand (see AGENTS.md → Release): CHANGELOG, `npm version X.Y.Z
+# --no-git-tag-version`, commit "chore(release): X.Y.Z", annotated tag vX.Y.Z. Then:
 #
-#   npm run release
+#   git push origin main
+#   git push origin vX.Y.Z     # one tag per push: this run publishes it
 #
-# This will lint, build, prompt for a version bump, update the changelog,
-# commit, tag, and push — which triggers this workflow to publish to npm.
+# GitHub creates no events when more than three tags are pushed at once, so pushing all old
+# tags with `git push --tags` publishes nothing; push the new tag on its own.
 
 name: Publish
 
@@ -80,6 +82,14 @@ jobs:
 
       - name: Install dependencies
         run: 'npm ci'
+
+      - name: Check that the tag matches package.json
+        run: |
+          version="v$(node -p "require('./package.json').version")"
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match the package.json version $version"
+            exit 1
+          fi
 
       - name: Release
         # Publishes to npm with a provenance attestation (requires id-token: write above).

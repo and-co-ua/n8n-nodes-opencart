@@ -6,17 +6,18 @@ single source of truth — the node implements what is written there.
 
 ## Status
 
-- **Version:** 0.10.0
-- **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products, 5 Customers, 6 Sales
+- **Version:** 1.0.0
+- **Stages done:** all (0–9). 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products, 5 Customers, 6 Sales
   (Order with Create/Update/Quote through the store's checkout, Return, Gift Voucher, notify
   options for e-mails), 7 Marketing (Marketing Campaign, Coupon, Mail → Send over all batches),
   8 Technical (Log, Maintenance, Image).
 - **0.10.0:** parameter **API** — `module` (Full API, default, everything above) or `standard`
   (the API built into OpenCart: Order → Create, Quote, Get, Change Status, Delete; credentials
   `openCartStandardApi`).
-- **Next:** stage 9 — Stabilization (1.0.0): publishing through GitHub Actions, documentation.
-- **Not yet verified in a running n8n:** the credential test request (`test`) — run
-  `npm run dev` and test the credentials manually.
+- **Next:** maintenance; new features only after agreement with Andrii.
+- **Not yet verified in a running n8n:** the UI and both credential tests (`test` of
+  `openCartApi` and `openCartStandardApi`); `npx @n8n/scan-community-package`. Operations were
+  run against the dev store with a stub of `IExecuteFunctions`.
 
 ## Architecture
 
@@ -104,6 +105,18 @@ npm run dev         # n8n with this node on http://localhost:5678 (hot reload)
 ```
 
 The dev OpenCart store from the module repository runs on http://localhost:8080.
+
+## Release
+
+1. `npm run lint && npm run build`; README, this file and CHANGELOG are current.
+2. CHANGELOG: `[Unreleased]` → `## [X.Y.Z] - YYYY-MM-DD`.
+3. `npm version X.Y.Z --no-git-tag-version`, commit `chore(release): X.Y.Z`,
+   `git tag -a vX.Y.Z -m "vX.Y.Z"`.
+4. Publishing (only when Andrii asks): `git push origin main`, then `git push origin vX.Y.Z` —
+   the tag alone. `.github/workflows/publish.yml` checks that the tag matches `package.json`,
+   runs lint and build and publishes to npm with provenance (npm Trusted Publishing or the
+   `NPM_TOKEN` secret, see the workflow header). Do not use `npm run release` locally: it runs
+   release-it with an auto-generated changelog.
 
 ## Conventions
 
