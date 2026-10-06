@@ -9,8 +9,10 @@ single source of truth — the node implements what is written there.
 - **Version:** 0.8.0
 - **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products, 5 Customers, 6 Sales
   (Order with Create/Update/Quote through the store's checkout, Return, Gift Voucher, notify
-  options for e-mails), 7 Marketing (Marketing Campaign, Coupon, Mail → Send over all batches).
-- **Next:** stage 8 — Technical (0.9.0): logs, maintenance tasks, image resize URL.
+  options for e-mails), 7 Marketing (Marketing Campaign, Coupon, Mail → Send over all batches),
+  8 Technical (Log, Maintenance, Image).
+- **Next:** stage 9 — Stabilization (1.0.0): `scan-community-package`, publishing through GitHub
+  Actions, test in a running n8n.
 - **Not yet verified in a running n8n:** the credential test request (`test`) — run
   `npm run dev` and test the credentials manually.
 

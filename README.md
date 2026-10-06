@@ -7,7 +7,7 @@ and maintenance tasks.
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/)
 workflow automation platform.
 
-> **Status:** early development (0.x). Available: orders, returns, gift vouchers, products, catalog, customers, marketing, mailing, reference lists, connection check.
+> **Status:** early development (0.x). Available: orders, returns, gift vouchers, products, catalog, customers, marketing, mailing, logs, maintenance, image resizing, reference lists, connection check.
 
 [Installation](#installation) ·
 [Operations](#operations) ·
@@ -36,8 +36,10 @@ workflow automation platform.
 | Download | Create, Delete, Get, Get Many, Update | Downloadable files for products; the file is uploaded from an input binary field. |
 | Filter Group | Create, Delete, Get, Get Many, Update | Filter groups with their filters (layered navigation). |
 | Gift Voucher | Create, Delete, Get, Get History, Get Many, Send, Update | Gift vouchers with balance, usage history and e-mail to the recipient. |
+| Image | Resize | URL of a resized copy of a store image (path relative to `image/`, as in products), made by the store's own image code. |
 | Information Page | Create, Delete, Get, Get Many, Update | Pages like About Us or Delivery, with footer link, meta tags and SEO keyword. |
 | Mail | Send | Mailing as Marketing → Mail in the admin panel: to newsletter subscribers, all customers, a customer group, selected customers or affiliates, or everyone who ordered given products. The node sends all batches and returns one summary item (`total`, `sent`, `failed`, `invalid`, `batches`). |
+| Maintenance | Clear Abandoned Carts, Clear Cache, Clear Expired Sessions, Clear Template Cache | Cleanup tasks for scheduled workflows: carts of customers not changed for N days, a system cache key (e.g. `product`), expired sessions, compiled Twig templates. |
 | Manufacturer | Create, Delete, Get, Get Many, Update | Brands with image, SEO keyword and stores. |
 | Marketing Campaign | Create, Delete, Get, Get Many, Update | Tracking codes with the tracking URL, clicks and completed orders. |
 | Option | Create, Delete, Get, Get Many, Update | Product options (select, radio, checkbox, text, date, …) with their values. |
@@ -45,6 +47,7 @@ workflow automation platform.
 | Product | Bulk Update, Copy, Create, Delete, Get, Get Many, Update | Products with prices, stock, descriptions, categories, attributes, options, discounts, specials, rewards, images (paths of existing files), related products and SEO keyword. Get Many filters for synchronisation: exact model / SKU, modified since, stock and price ranges, category with subcategories. |
 | Return | Create, Delete, Get, Get Many, Update, Add / Get History | Product returns; customer and product data are taken from the order; status changes can e-mail the customer. |
 | Review | Create, Delete, Get, Get Many, Update | Product reviews; filter by product, author, status and date, publish or edit them. |
+| Log | Clear, Get | Error log or OCMOD log: the last lines (up to 10000) with size and date, or empty the log. |
 | Lookup | Get Many | Reference lists: countries, currencies, customer groups, languages, layouts, order statuses, return actions, return reasons, return statuses, stores, tax classes, voucher themes, zones (optionally of one country). Translated lists accept a language. |
 | System | Ping | Check the connection; returns API and module versions, OpenCart and PHP versions, access mode, the way the key was received, store name and server time. |
 
@@ -74,7 +77,6 @@ language selected in the node (the store default when empty). A new record gets 
 text in all other languages until it is translated; an update changes only the selected
 language and only the fields you set.
 
-Planned: logs and maintenance tasks.
 
 ## Credentials
 
@@ -95,7 +97,7 @@ installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.8.0+).
+- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.9.0+).
 - Tested with the latest n8n release.
 
 ## Development

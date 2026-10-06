@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-06
+
+### Added
+
+- Log resource: Get (the last lines of the error or OCMOD log), Clear.
+- Maintenance resource: Clear Abandoned Carts, Clear Cache (by key), Clear Expired Sessions,
+  Clear Template Cache.
+- Image resource: Resize (URL of a resized store image).
+
 ## [0.8.0] - 2026-10-06
 
 ### Added
