@@ -2,7 +2,8 @@
 
 This is an n8n community node. It lets you manage an [OpenCart](https://www.opencart.com/) 3
 store in your n8n workflows: catalog, customers, orders, returns, gift vouchers, marketing
-and maintenance tasks.
+and maintenance tasks through the n8n API extension, or orders through the API built into
+OpenCart.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/)
 workflow automation platform.
@@ -18,11 +19,23 @@ workflow automation platform.
 
 ## Installation
 
-1. Install the **n8n API** extension in your OpenCart store and configure an API key.
-2. Install this package in n8n — follow the
-   [community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
+Install this package in n8n — follow the
+[community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
+
+The node works in one of two modes, chosen with the **API** parameter:
+
+| | Full API | Standard OpenCart API |
+|---|---|---|
+| In the store | the **n8n API** extension for OpenCart | nothing to install: the API built into OpenCart 3 |
+| Credentials | **OpenCart API** (key from the extension settings) | **OpenCart Standard API** (API user from **System → Users → API**) |
+| Operations | everything listed under [Operations](#operations) | Order: Create, Quote, Get, Change Status, Delete |
+
+For the standard API, add the IP address of your n8n server on the **IP Addresses** tab of the
+API user.
 
 ## Operations
+
+### Full API
 
 | Resource | Operation | Description |
 |---|---|---|
@@ -77,8 +90,22 @@ language selected in the node (the store default when empty). A new record gets 
 text in all other languages until it is translated; an update changes only the selected
 language and only the fields you set.
 
+### Standard OpenCart API
+
+| Resource | Operation | Description |
+|---|---|---|
+| Order | Create | Places an order the way the admin order form does: customer (guest or registered customer ID), products with options, payment and shipping addresses, coupon, gift voucher, reward points, shipping and payment method codes, comment, order status, affiliate, store and currency. Returns the order. |
+| Order | Quote | Runs the same steps without saving: products, totals, available shipping and payment methods. |
+| Order | Get | The order record. |
+| Order | Change Status | Adds a status to the order history, optionally notifying the customer. |
+| Order | Delete | Deletes the order. |
+
+IDs (country, zone, order status, customer group, store) are entered as numbers.
+
 
 ## Credentials
+
+### OpenCart API (Full API)
 
 Create **OpenCart API** credentials:
 
@@ -91,13 +118,25 @@ Create **OpenCart API** credentials:
 
 The credential test calls **System → Ping**.
 
+### OpenCart Standard API
+
+| Field | Description |
+|---|---|
+| Store URL | Storefront URL without `index.php`, e.g. `https://shop.example.com`. |
+| API Username | API user from **System → Users → API** (`Default` in a new store). |
+| API Key | The key of that user. |
+
+The node logs in for every item (`api/login`). The credential test logs in too and reports a
+wrong key or an IP address that is not allowed.
+
 Errors returned by the store keep their HTTP status and show the API error code
 (e.g. `invalid_api_key`, `read_only_mode`). A non-JSON response (wrong URL, module not
 installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x – 3.0.5.1 with the n8n API extension installed (API version 1, module 0.9.0+).
+- OpenCart 3.0.3.x – 3.0.5.1. Full API: the n8n API extension (API version 1, module 0.9.0+); Standard
+  OpenCart API: an enabled API user.
 - Tested with the latest n8n release.
 
 ## Development

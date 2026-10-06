@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-06
+
+### Added
+
+- Parameter **API**: *Full API* (the n8n API extension, default) or *Standard OpenCart API* (the
+  API built into OpenCart 3) with Order → Create, Quote, Get, Change Status, Delete and the
+  **OpenCart Standard API** credentials.
+- OpenCart logo as the node icon.
+
 ## [0.9.0] - 2026-10-06
 
 ### Added
