@@ -117,9 +117,14 @@ The npm name is `@and-co-ua/n8n-nodes-opencart` (`n8n-nodes-opencart` belongs to
    `git tag -a vX.Y.Z -m "vX.Y.Z"`.
 4. Publishing (only when Andrii asks): `git push origin main`, then `git push origin vX.Y.Z` —
    the tag alone. `.github/workflows/publish.yml` checks that the tag matches `package.json`,
-   runs lint and build and publishes to npm with provenance (npm Trusted Publishing or the
-   `NPM_TOKEN` secret, see the workflow header). Do not use `npm run release` locally: it runs
-   release-it with an auto-generated changelog.
+   runs lint and build and publishes to npm with provenance through **npm Trusted Publishing**
+   (OIDC; publisher `and-co-ua/n8n-nodes-opencart`, `publish.yml`, `npm publish` allowed). No
+   npm tokens: the repository has no `NPM_TOKEN` secret, do not add one. Check the result with
+   `gh run list -w publish.yml` and `npm view @and-co-ua/n8n-nodes-opencart dist-tags`.
+   Do not use `npm run release` locally: it runs release-it with an auto-generated changelog.
+
+1.0.0 was the first publish (2026-10-06): with a token npm staged it (placeholder version
+`0.0.0-stage`) until Andrii approved it on npmjs.com; Trusted Publishing was set up after that.
 
 ## Conventions
 
