@@ -1,6 +1,6 @@
 {
     "name": "n8n-nodes-opencart",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "n8n community node for OpenCart 3: manage catalog, customers, orders, returns, vouchers and marketing through the n8n API module",
     "license": "MIT",
     "homepage": "https://github.com/and-co-ua/n8n-nodes-opencart#readme",

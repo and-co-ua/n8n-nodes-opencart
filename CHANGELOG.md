@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-06
+
+### Added
+
+- Marketing Campaign resource: Create, Delete, Get, Get Many, Update.
+- Coupon resource: Create, Delete, Get, Get History, Get Many (incl. Active Now), Update.
+- Mail resource: Send to newsletter subscribers, all customers, a customer group, selected
+  customers or affiliates, or buyers of products; all batches are sent in one node run and
+  one summary item is returned.
+
 ## [0.7.0] - 2026-10-05
 
 ### Added

@@ -6,11 +6,11 @@ single source of truth — the node implements what is written there.
 
 ## Status
 
-- **Version:** 0.7.0
+- **Version:** 0.8.0
 - **Stages done:** 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products, 5 Customers, 6 Sales
   (Order with Create/Update/Quote through the store's checkout, Return, Gift Voucher, notify
-  options for e-mails).
-- **Next:** stage 7 — Marketing (0.8.0): Marketing, Coupon, Mail.
+  options for e-mails), 7 Marketing (Marketing Campaign, Coupon, Mail → Send over all batches).
+- **Next:** stage 8 — Technical (0.9.0): logs, maintenance tasks, image resize URL.
 - **Not yet verified in a running n8n:** the credential test request (`test`) — run
   `npm run dev` and test the credentials manually.
 
@@ -33,7 +33,9 @@ OpenCart node ──POST JSON──► {store}/index.php?route=api/n8n
 
 ```
 nodes/OpenCart/OpenCart.node.ts     node description, buildRequest() (operation → API action + params), execute()
-nodes/OpenCart/GenericFunctions.ts  openCartApiRequest(), SUPPORTED_API_VERSION
+nodes/OpenCart/GenericFunctions.ts  openCartApiRequest(), openCartApiRequestAllItems() (lists),
+                                    openCartApiRequestBatches() (mail.send until next_start is null),
+                                    SUPPORTED_API_VERSION
 nodes/OpenCart/LoadOptions.ts       loadOptions (get<Lookup>/get<Entity>) and listSearch (searchProducts, searchCustomers)
 nodes/OpenCart/descriptions/        <Resource>Description.ts: operations, fields, build<Resource>Request()
 nodes/OpenCart/descriptions/common.ts  ApiCall, languageField, listFields, sortOptions, listParams,
@@ -65,9 +67,11 @@ Every node and credential must be registered in `package.json` → `n8n.nodes` /
 6. Large entity sets (products) use a `resourceLocator` (`PRODUCT_LOCATOR`, list mode backed by
    `listSearch`, paging via `paginationToken`) instead of `loadOptions`; read it with
    `getNodeParameter(name, i, undefined, { extractValue: true })`.
-7. Operations that combine input items (Product → Bulk Update) are handled before the per-item
+7. Batched write actions (Mail → Send): the builder returns `batched: true`; `execute()`
+   repeats the call with `start` = `next_start` and outputs the summed result.
+8. Operations that combine input items (Product → Bulk Update) are handled before the per-item
    loop in `execute()` (`executeBulkUpdate`).
-8. Errors: in `catch`, wrap with `NodeApiError`/`NodeOperationError` (the lint rule forbids
+9. Errors: in `catch`, wrap with `NodeApiError`/`NodeOperationError` (the lint rule forbids
    re-throwing the caught value; both constructors return an error of their own class unchanged).
 
 ## Commands
