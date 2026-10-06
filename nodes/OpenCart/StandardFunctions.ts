@@ -1,4 +1,12 @@
-import type { ICredentialDataDecryptedObject, IDataObject, IExecuteFunctions, JsonObject } from 'n8n-workflow';
+import type {
+	ICredentialDataDecryptedObject,
+	ICredentialTestFunctions,
+	ICredentialsDecrypted,
+	IDataObject,
+	IExecuteFunctions,
+	INodeCredentialTestResult,
+	JsonObject,
+} from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
 
 /**
@@ -190,4 +198,35 @@ export async function standardRequest(
 	}
 
 	return data;
+}
+
+/**
+ * Credential test (testedBy): logs in. Uses fetch because the test context only offers the
+ * deprecated request helper.
+ */
+export async function testStandardCredentials(
+	this: ICredentialTestFunctions,
+	credential: ICredentialsDecrypted,
+): Promise<INodeCredentialTestResult> {
+	const credentials = credential.data ?? {};
+	let text: string;
+
+	try {
+		const response = await fetch(`${storeUrl(credentials)}/index.php?route=api/login`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: toForm({ username: credentials.username as string, key: credentials.apiKey as string }),
+			signal: AbortSignal.timeout(15000),
+		});
+
+		text = await response.text();
+	} catch (error) {
+		return { status: 'Error', message: `The store could not be reached: ${(error as Error).message}` };
+	}
+
+	const message = loginError(parse(text));
+
+	return message === undefined
+		? { status: 'OK', message: 'Connection successful' }
+		: { status: 'Error', message };
 }

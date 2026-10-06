@@ -1,8 +1,9 @@
-import type { ICredentialTestRequest, ICredentialType, Icon, INodeProperties } from 'n8n-workflow';
+import type { ICredentialType, Icon, INodeProperties } from 'n8n-workflow';
 
 /**
  * The API built into OpenCart 3 (catalog/controller/api/*): an API user from
- * System → Users → API. The node logs in (api/login) for every item, see StandardFunctions.ts.
+ * System → Users → API. The node logs in (api/login) for every item and tests the credentials
+ * (testedBy: n8n cannot apply test rules to the bare [] that api/login returns for a wrong key).
  */
 export class OpenCartStandardApi implements ICredentialType {
 	name = 'openCartStandardApi';
@@ -45,31 +46,4 @@ export class OpenCartStandardApi implements ICredentialType {
 			required: true,
 		},
 	];
-
-	// api/login returns api_token on success; [] for a wrong user or key, an error for a wrong IP
-	test: ICredentialTestRequest = {
-		request: {
-			baseURL: '={{$credentials.url.replace(/\\/+$/, "")}}',
-			url: '/index.php',
-			qs: { route: 'api/login' },
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: {
-				username: '={{$credentials.username}}',
-				key: '={{$credentials.apiKey}}',
-			},
-			json: true,
-		},
-		rules: [
-			{
-				type: 'responseSuccessBody',
-				properties: {
-					key: 'api_token',
-					value: undefined,
-					message:
-						'Login failed. Check the API username and key, and that the IP address of the n8n server is on the IP Addresses tab of the API user (System → Users → API).',
-				},
-			},
-		],
-	};
 }

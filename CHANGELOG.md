@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The credential test reports a store where the n8n API module is not activated yet
   (module 1.2.0+).
 
+### Fixed
+
+- OpenCart Standard API credential test: a wrong key failed with "Cannot read properties of
+  undefined"; it now reports a wrong key, a not allowed IP address or a wrong store URL.
+
 ## [1.0.0] - 2026-10-06
 
 ### Changed

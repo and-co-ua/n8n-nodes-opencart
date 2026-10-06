@@ -1,8 +1,11 @@
 import type {
+	ICredentialTestFunctions,
+	ICredentialsDecrypted,
 	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
+	INodeCredentialTestResult,
 	INodeTypeDescription,
 	JsonObject,
 } from 'n8n-workflow';
@@ -83,6 +86,7 @@ import { buildSystemRequest, systemFields, systemOperations } from './descriptio
 import { buildVoucherRequest, voucherFields, voucherOperations } from './descriptions/VoucherDescription';
 import { openCartApiRequest, openCartApiRequestAllItems, openCartApiRequestBatches } from './GenericFunctions';
 import { listSearch, loadOptions } from './LoadOptions';
+import { testStandardCredentials } from './StandardFunctions';
 
 /** Resource → builder of the API call (action + params) for one item. See docs/API.md of the module. */
 const BUILDERS: Record<
@@ -183,6 +187,7 @@ export class OpenCart implements INodeType {
 			{
 				name: 'openCartStandardApi',
 				required: true,
+				testedBy: 'openCartStandardApiTest',
 				displayOptions: { show: { api: ['standard'] } },
 			},
 		],
@@ -374,6 +379,14 @@ export class OpenCart implements INodeType {
 	methods = {
 		loadOptions,
 		listSearch,
+		credentialTest: {
+			async openCartStandardApiTest(
+				this: ICredentialTestFunctions,
+				credential: ICredentialsDecrypted,
+			): Promise<INodeCredentialTestResult> {
+				return await testStandardCredentials.call(this, credential);
+			},
+		},
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
