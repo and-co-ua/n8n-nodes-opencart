@@ -86,7 +86,7 @@ export async function openCartApiRequest(
 				itemIndex,
 				description:
 					apiVersion > SUPPORTED_API_VERSION
-						? 'Update the n8n-nodes-opencart package.'
+						? 'Update the @and-co-ua/n8n-nodes-opencart package.'
 						: 'Update the n8n API module in the OpenCart store.',
 			},
 		);

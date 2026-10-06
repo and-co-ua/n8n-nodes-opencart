@@ -1,4 +1,4 @@
-# AGENTS.md — n8n community node `n8n-nodes-opencart`
+# AGENTS.md — n8n community node `@and-co-ua/n8n-nodes-opencart`
 
 n8n community node package for OpenCart 3. It talks to the OpenCart module `n8n_api`
 (separate repository). The API contract lives in that repository's `docs/API.md` and is the
@@ -107,6 +107,9 @@ npm run dev         # n8n with this node on http://localhost:5678 (hot reload)
 The dev OpenCart store from the module repository runs on http://localhost:8080.
 
 ## Release
+
+The npm name is `@and-co-ua/n8n-nodes-opencart` (`n8n-nodes-opencart` belongs to another author); scoped, so
+`publishConfig.access` is `public`.
 
 1. `npm run lint && npm run build`; README, this file and CHANGELOG are current.
 2. CHANGELOG: `[Unreleased]` → `## [X.Y.Z] - YYYY-MM-DD`.

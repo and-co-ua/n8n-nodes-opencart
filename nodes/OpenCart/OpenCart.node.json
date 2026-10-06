@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-opencart.openCart",
+	"node": "@and-co-ua/n8n-nodes-opencart.openCart",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Sales"],

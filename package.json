@@ -1,5 +1,5 @@
 {
-    "name": "n8n-nodes-opencart",
+    "name": "@and-co-ua/n8n-nodes-opencart",
     "version": "1.0.0",
     "description": "n8n community node for OpenCart 3: manage catalog, customers, orders, returns, vouchers and marketing through the n8n API module, or orders through the standard OpenCart API",
     "license": "MIT",
@@ -26,6 +26,9 @@
         "lint:fix": "n8n-node lint --fix",
         "release": "n8n-node release",
         "prepublishOnly": "n8n-node prerelease"
+    },
+    "publishConfig": {
+        "access": "public"
     },
     "files": [
         "dist"

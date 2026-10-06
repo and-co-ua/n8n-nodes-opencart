@@ -1,4 +1,4 @@
-# n8n-nodes-opencart
+# @and-co-ua/n8n-nodes-opencart
 
 This is an n8n community node. It lets you manage an [OpenCart](https://www.opencart.com/) 3
 store in your n8n workflows: catalog, customers, orders, returns, gift vouchers, marketing
@@ -17,7 +17,7 @@ workflow automation platform.
 
 ## Installation
 
-Install this package in n8n — follow the
+Install the package `@and-co-ua/n8n-nodes-opencart` in n8n — follow the
 [community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
 
 The node works in one of two modes, chosen with the **API** parameter:

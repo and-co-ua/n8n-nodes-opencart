@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Published on npm as `@and-co-ua/n8n-nodes-opencart`.
 - The publish workflow checks that the tag matches the `package.json` version.
 
 ## [0.10.0] - 2026-10-06
