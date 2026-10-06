@@ -138,3 +138,35 @@ export async function openCartApiRequestAllItems(
 		}
 	}
 }
+
+/**
+ * Calls a batched write action (mail.send) until `next_start` is null and returns the batch
+ * results added up: `sent`, `failed`, `invalid`, plus `total` and `batches`.
+ */
+export async function openCartApiRequestBatches(
+	this: IExecuteFunctions,
+	resource: string,
+	action: string,
+	params: IDataObject = {},
+	itemIndex = 0,
+): Promise<IDataObject> {
+	const summary: IDataObject = { total: 0, sent: 0, failed: 0, invalid: 0, batches: 0 };
+	let start = 0;
+
+	for (;;) {
+		const { data } = await openCartApiRequest.call(this, resource, action, { ...params, start }, itemIndex);
+		const batch = data as IDataObject;
+
+		summary.total = batch.total;
+		summary.sent = Number(summary.sent) + Number(batch.sent ?? 0);
+		summary.failed = Number(summary.failed) + Number(batch.failed ?? 0);
+		summary.invalid = Number(summary.invalid) + Number(batch.invalid ?? 0);
+		summary.batches = Number(summary.batches) + 1;
+
+		if (batch.next_start === null || batch.next_start === undefined) {
+			return summary;
+		}
+
+		start = Number(batch.next_start);
+	}
+}

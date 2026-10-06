@@ -1,10 +1,14 @@
 import type { IDataObject, IExecuteFunctions, INodeProperties } from 'n8n-workflow';
 
-/** What a resource builder returns: the API action, its params and whether it is a paginated list. */
+/**
+ * What a resource builder returns: the API action, its params, whether it is a paginated list
+ * and whether it is sent in batches until `next_start` is null.
+ */
 export interface ApiCall {
 	action: string;
 	params: IDataObject;
 	list?: boolean;
+	batched?: boolean;
 }
 
 export function languageField(resource: string, operations: string[]): INodeProperties {

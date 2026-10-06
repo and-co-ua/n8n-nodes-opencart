@@ -50,6 +50,7 @@ import {
 	informationOperations,
 } from './descriptions/InformationDescription';
 import { buildLookupRequest, lookupFields, lookupOperations } from './descriptions/LookupDescription';
+import { buildMailRequest, mailFields, mailOperations } from './descriptions/MailDescription';
 import {
 	buildManufacturerRequest,
 	manufacturerFields,
@@ -72,7 +73,7 @@ import { buildReturnRequest, returnFields, returnOperations } from './descriptio
 import { buildReviewRequest, reviewFields, reviewOperations } from './descriptions/ReviewDescription';
 import { buildSystemRequest, systemFields, systemOperations } from './descriptions/SystemDescription';
 import { buildVoucherRequest, voucherFields, voucherOperations } from './descriptions/VoucherDescription';
-import { openCartApiRequest, openCartApiRequestAllItems } from './GenericFunctions';
+import { openCartApiRequest, openCartApiRequestAllItems, openCartApiRequestBatches } from './GenericFunctions';
 import { listSearch, loadOptions } from './LoadOptions';
 
 /** Resource → builder of the API call (action + params) for one item. See docs/API.md of the module. */
@@ -91,6 +92,7 @@ const BUILDERS: Record<
 	filter_group: buildFilterGroupRequest,
 	information: buildInformationRequest,
 	lookup: buildLookupRequest,
+	mail: buildMailRequest,
 	manufacturer: buildManufacturerRequest,
 	marketing: buildMarketingRequest,
 	option: buildOptionRequest,
@@ -223,6 +225,11 @@ export class OpenCart implements INodeType {
 						description: 'Reference lists: languages, statuses, countries and more',
 					},
 					{
+						name: 'Mail',
+						value: 'mail',
+						description: 'Mailing to customers, as Marketing → Mail in the admin panel',
+					},
+					{
 						name: 'Manufacturer',
 						value: 'manufacturer',
 					},
@@ -279,6 +286,8 @@ export class OpenCart implements INodeType {
 			...informationFields,
 			...lookupOperations,
 			...lookupFields,
+			...mailOperations,
+			...mailFields,
 			...manufacturerOperations,
 			...manufacturerFields,
 			...marketingOperations,
@@ -325,7 +334,9 @@ export class OpenCart implements INodeType {
 
 				let data: unknown;
 
-				if (call.list && this.getNodeParameter('returnAll', i, false)) {
+				if (call.batched) {
+					data = await openCartApiRequestBatches.call(this, resource, call.action, call.params, i);
+				} else if (call.list && this.getNodeParameter('returnAll', i, false)) {
 					data = await openCartApiRequestAllItems.call(this, resource, call.action, call.params, i);
 				} else {
 					if (call.list) {
