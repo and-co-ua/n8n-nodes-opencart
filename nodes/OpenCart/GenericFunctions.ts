@@ -10,6 +10,9 @@ import { NodeApiError, NodeOperationError } from 'n8n-workflow';
 /** API contract version this node implements (opencart repo, docs/API.md). */
 export const SUPPORTED_API_VERSION = 1;
 
+/** The n8n API extension on OpenCart Marketplace (Full API). */
+export const MODULE_URL = 'https://www.opencart.com/index.php?route=marketplace/extension/info&extension_id=49833';
+
 export interface OpenCartResult {
 	data: unknown;
 	meta: IDataObject;
@@ -70,7 +73,8 @@ export async function openCartApiRequest(
 			httpCode: String(statusCode),
 			message: `The store did not return an n8n API response (HTTP ${statusCode})`,
 			description:
-				'Check that the Store URL is correct and the n8n API module is installed and enabled. ' +
+				'Check that the Store URL is correct and the n8n API module is installed and enabled ' +
+				`(${MODULE_URL}). ` +
 				'If the n8n_api event is disabled in Extensions → Events, enable it or switch the credential ' +
 				'Endpoint Route to extension/module/n8n_api.',
 		});

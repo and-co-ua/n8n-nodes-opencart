@@ -2,7 +2,7 @@
 
 This is an n8n community node. It lets you manage an [OpenCart](https://www.opencart.com/) 3
 store in your n8n workflows: catalog, customers, orders, returns, gift vouchers, marketing
-and maintenance tasks through the n8n API extension, or orders through the API built into
+and maintenance tasks through the [n8n API extension](https://www.opencart.com/index.php?route=marketplace/extension/info&extension_id=49833), or orders through the API built into
 OpenCart.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/)
@@ -26,7 +26,7 @@ credentials use the Full API, **OpenCart Standard API** credentials the API buil
 
 | | Full API | Standard OpenCart API |
 |---|---|---|
-| In the store | the **n8n API** extension for OpenCart | nothing to install: the API built into OpenCart 3 |
+| In the store | the [**n8n API** extension for OpenCart](https://www.opencart.com/index.php?route=marketplace/extension/info&extension_id=49833) (OpenCart Marketplace) | nothing to install: the API built into OpenCart 3 |
 | Credentials | **OpenCart API** (key from the extension settings) | **OpenCart Standard API** (API user from **System → Users → API**) |
 | Operations | everything listed under [Operations](#operations) | Order: Create, Quote, Get, Change Status, Delete |
 
@@ -180,7 +180,7 @@ installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x – 3.0.5.1. Full API: the n8n API extension (API version 1, module 1.0.0+); Standard
+- OpenCart 3.0.3.x – 3.0.5.1. Full API: the [n8n API extension](https://www.opencart.com/index.php?route=marketplace/extension/info&extension_id=49833) (API version 1, module 1.0.0+); Standard
   OpenCart API: an enabled API user.
 - Tested with the latest n8n release.
 

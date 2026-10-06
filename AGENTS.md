@@ -6,7 +6,7 @@ single source of truth — the node implements what is written there.
 
 ## Status
 
-- **Version:** 1.1.0
+- **Version:** 1.1.1
 - **Stages done:** all (0–9). 0 Bootstrap, 1 Core, 2 Lookups, 3 Catalog, 4 Products, 5 Customers, 6 Sales
   (Order with Create/Update/Quote through the store's checkout, Return, Gift Voucher, notify
   options for e-mails), 7 Marketing (Marketing Campaign, Coupon, Mail → Send over all batches),

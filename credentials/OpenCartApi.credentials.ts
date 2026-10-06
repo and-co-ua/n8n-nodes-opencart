@@ -21,6 +21,13 @@ export class OpenCartApi implements ICredentialType {
 
 	properties: INodeProperties[] = [
 		{
+			displayName:
+				'Requires the <a href="https://www.opencart.com/index.php?route=marketplace/extension/info&amp;extension_id=49833" target="_blank">n8n API extension for OpenCart</a> in your store. Without it, use OpenCart Standard API credentials (orders only).',
+			name: 'notice',
+			type: 'notice',
+			default: '',
+		},
+		{
 			displayName: 'Store URL',
 			name: 'url',
 			type: 'string',

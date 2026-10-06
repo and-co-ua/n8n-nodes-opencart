@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-06
+
+### Added
+
+- Links to the n8n API extension on OpenCart Marketplace: README, a notice in the OpenCart API
+  credentials and the error shown when the store does not answer as the extension.
+
 ## [1.1.0] - 2026-10-06
 
 ### Added
