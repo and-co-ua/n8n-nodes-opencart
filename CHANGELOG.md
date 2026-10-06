@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The credential test reports a store where the n8n API module is not activated yet
+  (module 1.2.0+).
+
 ## [1.0.0] - 2026-10-06
 
 ### Changed

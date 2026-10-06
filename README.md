@@ -152,7 +152,8 @@ The node logs in for every item (`api/login`). The credential test logs in too a
 wrong key or an IP address that is not allowed.
 
 Errors returned by the store keep their HTTP status and show the API error code
-(e.g. `invalid_api_key`, `read_only_mode`). A non-JSON response (wrong URL, module not
+(e.g. `invalid_api_key`, `read_only_mode`, `license_required` — the module is not activated
+for the store yet; the credential test reports it too). A non-JSON response (wrong URL, module not
 installed, disabled event) is reported with a hint on what to check.
 
 ## Compatibility

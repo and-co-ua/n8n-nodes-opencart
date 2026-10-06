@@ -132,6 +132,15 @@ export class OpenCartApi implements ICredentialType {
 					message: 'The store rejected the request. Check the API key and the module settings.',
 				},
 			},
+			{
+				type: 'responseSuccessBody',
+				properties: {
+					key: 'data.license',
+					value: 'inactive',
+					message:
+						'The n8n API module is not activated for this store. Activate it with the opencart.com order ID on the module settings page (Extensions → Modules → n8n API).',
+				},
+			},
 		],
 	};
 }
