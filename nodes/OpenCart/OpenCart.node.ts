@@ -78,6 +78,7 @@ import {
 } from './descriptions/ProductDescription';
 import { buildReturnRequest, returnFields, returnOperations } from './descriptions/ReturnDescription';
 import { buildReviewRequest, reviewFields, reviewOperations } from './descriptions/ReviewDescription';
+import { executeStandardOrder, standardOrderFields, standardResourceFields } from './descriptions/StandardOrderDescription';
 import { buildSystemRequest, systemFields, systemOperations } from './descriptions/SystemDescription';
 import { buildVoucherRequest, voucherFields, voucherOperations } from './descriptions/VoucherDescription';
 import { openCartApiRequest, openCartApiRequestAllItems, openCartApiRequestBatches } from './GenericFunctions';
@@ -164,8 +165,9 @@ export class OpenCart implements INodeType {
 		icon: { light: 'file:opencart.svg', dark: 'file:opencart.dark.svg' },
 		group: ['transform'],
 		version: [1],
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Manage an OpenCart 3 store through the n8n API module',
+		subtitle:
+			'={{$parameter["api"] === "standard" ? $parameter["standardOperation"] + ": order (standard API)" : $parameter["operation"] + ": " + $parameter["resource"]}}',
+		description: 'Manage an OpenCart 3 store through the n8n API module or the standard OpenCart API',
 		defaults: {
 			name: 'OpenCart',
 		},
@@ -176,14 +178,43 @@ export class OpenCart implements INodeType {
 			{
 				name: 'openCartApi',
 				required: true,
+				displayOptions: { show: { api: ['module'] } },
+			},
+			{
+				name: 'openCartStandardApi',
+				required: true,
+				displayOptions: { show: { api: ['standard'] } },
 			},
 		],
 		properties: [
+			{
+				displayName: 'API',
+				name: 'api',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Full API',
+						value: 'module',
+						description:
+							'Catalog, products, customers, orders, returns, marketing and maintenance; needs the n8n API extension for OpenCart',
+					},
+					{
+						name: 'Standard OpenCart API',
+						value: 'standard',
+						description: 'Orders through the API built into OpenCart; needs an API user in System → Users → API',
+					},
+				],
+				default: 'module',
+			},
+			...standardResourceFields,
+			...standardOrderFields,
 			{
 				displayName: 'Resource',
 				name: 'resource',
 				type: 'options',
 				noDataExpression: true,
+				displayOptions: { show: { api: ['module'] } },
 				options: [
 					{
 						name: 'Attribute',
@@ -351,6 +382,7 @@ export class OpenCart implements INodeType {
 
 		if (
 			items.length > 0 &&
+			this.getNodeParameter('api', 0, 'module') === 'module' &&
 			this.getNodeParameter('resource', 0) === 'product' &&
 			this.getNodeParameter('operation', 0) === 'bulkUpdate'
 		) {
@@ -359,6 +391,13 @@ export class OpenCart implements INodeType {
 
 		for (let i = 0; i < items.length; i++) {
 			try {
+				if (this.getNodeParameter('api', i, 'module') === 'standard') {
+					const order = await executeStandardOrder.call(this, i);
+
+					returnData.push({ json: order, pairedItem: { item: i } });
+					continue;
+				}
+
 				const resource = this.getNodeParameter('resource', i) as string;
 				const operation = this.getNodeParameter('operation', i) as string;
 				const call = await BUILDERS[resource].call(this, operation, i);
