@@ -15,6 +15,12 @@ export const maintenanceOperations: INodeProperties[] = [
 		},
 		options: [
 			{
+				name: 'Clear Abandoned Carts',
+				value: 'clearCarts',
+				description: 'Delete carts of customers not changed for a number of days',
+				action: 'Clear abandoned carts',
+			},
+			{
 				name: 'Clear Cache',
 				value: 'clearCache',
 				description: 'Delete a key of the system cache',
@@ -39,6 +45,17 @@ export const maintenanceOperations: INodeProperties[] = [
 
 export const maintenanceFields: INodeProperties[] = [
 	{
+		displayName: 'Older Than (Days)',
+		name: 'days',
+		type: 'number',
+		required: true,
+		typeOptions: { minValue: 1, maxValue: 3650 },
+		displayOptions: { show: { resource: ['maintenance'], operation: ['clearCarts'] } },
+		default: 30,
+		description:
+			'Delete the whole cart of a customer whose newest cart item is older than this. Guest carts older than an hour are deleted too.',
+	},
+	{
 		displayName: 'Cache Key',
 		name: 'key',
 		type: 'string',
@@ -53,6 +70,7 @@ export const maintenanceFields: INodeProperties[] = [
 
 const ACTIONS: Record<string, string> = {
 	clearCache: 'clear_cache',
+	clearCarts: 'clear_carts',
 	clearSessions: 'clear_sessions',
 	clearTemplateCache: 'clear_template_cache',
 };
@@ -60,6 +78,10 @@ const ACTIONS: Record<string, string> = {
 export function buildMaintenanceRequest(this: IExecuteFunctions, operation: string, i: number): ApiCall {
 	if (operation === 'clearCache') {
 		return { action: ACTIONS[operation], params: { key: this.getNodeParameter('key', i) } };
+	}
+
+	if (operation === 'clearCarts') {
+		return { action: ACTIONS[operation], params: { days: this.getNodeParameter('days', i) } };
 	}
 
 	return { action: ACTIONS[operation], params: {} };
