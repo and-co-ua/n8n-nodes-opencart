@@ -21,7 +21,8 @@ workflow automation platform.
 Install the package `@and-co-ua/n8n-nodes-opencart` in n8n — follow the
 [community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/).
 
-The node works in one of two modes, chosen with the **API** parameter:
+The node works in one of two modes. The credentials you select in the node choose it: **OpenCart API**
+credentials use the Full API, **OpenCart Standard API** credentials the API built into OpenCart.
 
 | | Full API | Standard OpenCart API |
 |---|---|---|
@@ -104,26 +105,47 @@ IDs (country, zone, order status, customer group, store) are entered as numbers.
 
 ## Usage examples
 
-**Price and stock sync from a spreadsheet (Full API).**
-Schedule Trigger → Google Sheets (read rows with SKU, price, quantity) → OpenCart
-*Product → Bulk Update* with *Match By* = SKU and the fields mapped from the sheet. The node sends
-the rows in batches of 500 and returns one item per row with `success` / `error`; route failed
-rows with an IF node to a notification.
+Ready-to-import workflows are in [`examples/`](examples). In n8n open **Workflows → Import from
+File**, then select your credentials in the OpenCart and e-mail nodes.
 
-**New orders to a chat (Full API).**
-Schedule Trigger (every 5 minutes) → OpenCart *Order → Get Many* with *Date Added From* set to
-`{{ $now.minus(5, 'minutes') }}` → Slack / Telegram message with the order number, customer and
-total. Add *Order → Add History* to move processed orders to the next status.
+**Daily sales digest** ([JSON](examples/1-daily-sales-digest.json)) — every morning
+*Order → Get Many* with *Date Added From* = `{{ $now.minus({ days: 1 }).toISO() }}`, a Code node
+builds an HTML table with revenue and the average order, *Send Email* delivers it.
 
-**Orders from another channel (Standard OpenCart API or Full API).**
-Webhook (order from a marketplace or a form) → OpenCart *Order → Quote* to see the shipping and
-payment method codes for the products and address → *Order → Create* with the chosen codes. The
-store calculates prices, taxes and totals, subtracts stock and sends its order e-mails.
+![Daily sales digest workflow](docs/images/sales-digest-workflow.png)
+![Order → Get Many with the orders of the last 24 hours](docs/images/order-get-many.png)
+![The digest e-mail](docs/images/sales-digest-email.png)
 
-**Nightly maintenance (Full API).**
-Schedule Trigger (daily) → *Maintenance → Clear Expired Sessions* → *Maintenance → Clear
-Abandoned Carts* (e.g. older than 90 days) → *Log → Get* (Error Log, last 50 lines) → e-mail the
-log when it is not empty.
+**Low stock alert** ([JSON](examples/2-low-stock-alert.json)) — *Product → Get Many* with
+*Quantity Max* = 5 and *Status* = enabled, a report to the purchasing team.
+
+![Low stock e-mail](docs/images/low-stock-email.png)
+
+**Supplier price and stock sync** ([JSON](examples/3-supplier-price-and-stock-sync.json)) — the
+supplier's price list (Google Sheets, CSV, FTP or an API; a Code node in the example) goes to
+*Product → Bulk Update* matched by SKU. Up to 500 products per request; every item reports
+`success` or the reason it failed, e.g. an unknown SKU.
+
+![Product → Bulk Update](docs/images/product-bulk-update.png)
+
+**AI shop assistant** ([JSON](examples/4-ai-shop-assistant.json)) — an AI Agent with OpenCart
+operations as tools: *Find products*, *Find orders of a customer*, *Order details*. Ask "Which
+MacBooks are in stock?" or "Where is the order of emma.wilson@example.com?".
+
+![AI shop assistant](docs/images/ai-shop-assistant.png)
+
+**Orders from a landing page** ([JSON](examples/5-orders-from-a-landing-page.json)) — a Webhook
+receives the form and *Order → Create* of the **Standard OpenCart API** places the order through
+the store checkout (prices, taxes, shipping, stock and the store's e-mails). With the Full API use
+*Order → Quote* first to get the shipping and payment method codes.
+
+![Order → Create with the Standard OpenCart API](docs/images/standard-api-order-create.png)
+
+**Nightly maintenance** ([JSON](examples/6-nightly-maintenance.json)) — *Clear Expired Sessions*,
+*Clear Abandoned Carts* (90 days), *Clear Cache* (`product`), *Log → Get* and an e-mail report to
+the developer.
+
+![Nightly maintenance workflow](docs/images/nightly-maintenance-workflow.png)
 
 ## Credentials
 

@@ -1,0 +1,107 @@
+{
+  "name": "Supplier price and stock sync",
+  "nodes": [
+    {
+      "id": "eeb96f0a-8560-467d-8eeb-fc63c9a9e8ca",
+      "name": "Every 6 hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "2b1269e8-b432-4013-863c-085344f078dc",
+      "name": "Supplier price list",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// The supplier's price list: read it from Google Sheets, a CSV file, FTP or the supplier's API\nreturn [\n  { sku: 'IPHONE', price: 119.0, quantity: 85 },\n  { sku: 'MACBOOK', price: 549.0, quantity: 40 },\n  { sku: 'MACBOOK-PRO', price: 1999.0, quantity: 12 },\n  { sku: 'IMAC', price: 1299.0, quantity: 9 },\n  { sku: 'IPOD-NANO', price: 99.0, quantity: 150 },\n  { sku: 'NIKON-D300', price: 849.0, quantity: 18 },\n  { sku: 'HTC-TOUCH-HD', price: 89.0, quantity: 60 },\n  { sku: 'DISCONTINUED-42', price: 10.0, quantity: 0 },\n].map((json) => ({ json }));"
+      }
+    },
+    {
+      "id": "70ea50e2-bc07-4632-9661-31055b02d961",
+      "name": "Update prices and stock",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCart",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "resource": "product",
+        "operation": "bulkUpdate",
+        "matchBy": "sku",
+        "matchValue": "={{ $json.sku }}",
+        "bulkFields": {
+          "price": "={{ $json.price }}",
+          "quantity": "={{ $json.quantity }}"
+        }
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "93772662-6fa2-4654-8747-0a6f5fd878ce",
+      "name": "Note b4ef4ade",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -190
+      ],
+      "parameters": {
+        "content": "## Supplier price and stock sync\nPrices and stock from the supplier are matched by SKU and updated in batches of 500 products per request. Every item reports success or the reason it failed (e.g. an unknown SKU).",
+        "width": 640,
+        "height": 140,
+        "color": 4
+      }
+    }
+  ],
+  "connections": {
+    "Every 6 hours": {
+      "main": [
+        [
+          {
+            "node": "Supplier price list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supplier price list": {
+      "main": [
+        [
+          {
+            "node": "Update prices and stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

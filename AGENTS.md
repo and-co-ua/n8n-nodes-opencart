@@ -51,6 +51,8 @@ nodes/OpenCart/descriptions/StandardOrderDescription.ts  API = standard: standar
 nodes/OpenCart/descriptions/common.ts  ApiCall, languageField, listFields, sortOptions, listParams,
                                     descriptionItem, seoUrlItem, toApiDate
 nodes/OpenCart/OpenCart.node.json   codex (category Sales, docs links)
+examples/                           importable demo workflows (README → Usage examples), no credential IDs
+docs/images/                        README screenshots (not in the npm package: files = dist)
 nodes/OpenCart/opencart(.dark).svg  icons
 credentials/OpenCartApi.credentials.ts  url, apiKey, authMethod, route; custom authenticate(); ping test
 credentials/OpenCartStandardApi.credentials.ts  url, username, apiKey; tested by the node (testedBy →
@@ -64,7 +66,9 @@ Every node and credential must be registered in `package.json` → `n8n.nodes` /
 
 ## Two APIs
 
-The parameter `api` selects the backend. `module` (default — existing workflows keep working):
+The parameter `api` selects the backend. n8n shows it inside the credential selector (it is the
+field the credentials' displayOptions depend on), so users switch by choosing OpenCart API or
+OpenCart Standard API credentials. `module` (default — existing workflows keep working):
 `resource` / `operation` and all descriptions except the standard one; `resource` is shown only for
 `module`, so every module field is hidden for `standard`. `standard`: parameters are prefixed
 (`standardResource`, `standardOperation`, `standardOrderId`, …) so they never collide with module

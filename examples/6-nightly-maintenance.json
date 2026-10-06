@@ -1,0 +1,229 @@
+{
+  "name": "Nightly maintenance",
+  "nodes": [
+    {
+      "id": "9d8ef9ee-9e25-45e9-aea5-ad38f3d8220b",
+      "name": "Every night at 3:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cb99dd7c-b032-4df4-b1b7-9ee9c1f9f488",
+      "name": "Clear expired sessions",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCart",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "resource": "maintenance",
+        "operation": "clearSessions"
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "5a30db3b-07ce-4a1c-9cc6-3f54d692c675",
+      "name": "Clear abandoned carts",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCart",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "resource": "maintenance",
+        "operation": "clearCarts",
+        "days": 90
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "fbef3970-e202-41cb-8be9-804346525516",
+      "name": "Clear the product cache",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCart",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "resource": "maintenance",
+        "operation": "clearCache",
+        "key": "product"
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "e4f671f5-56e3-48f1-b2a5-ae11ef98501a",
+      "name": "Last lines of the error log",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCart",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "resource": "log",
+        "operation": "get",
+        "log": "error",
+        "lines": 20
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "a837b4ee-f954-4c20-a3b4-b427fb33c36c",
+      "name": "Build the report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const [sessions, carts, cache, log] = ['Clear expired sessions', 'Clear abandoned carts', 'Clear the product cache', 'Last lines of the error log'].map((name) => $(name).first().json);\nconst html = `<h2>Nightly maintenance</h2>\n<ul><li>Expired sessions deleted: <b>${sessions.deleted}</b></li>\n<li>Abandoned carts deleted: <b>${carts.customers}</b> (${carts.customer_items} items)</li>\n<li>Cache cleared: <b>${cache.key}</b></li>\n<li>Error log: <b>${log.size}</b> bytes</li></ul>\n<pre style=\"background:#f4f4f4;padding:8px\">${log.content || 'No errors'}</pre>`;\nreturn [{ json: { html } }];"
+      }
+    },
+    {
+      "id": "35e4ea9d-5fa6-44d8-8eda-dd0a39cf4bd0",
+      "name": "E-mail the developer",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "n8n@your-store.com",
+        "toEmail": "manager@your-store.com",
+        "subject": "Nightly maintenance report",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "name": "Store mailbox (SMTP)"
+        }
+      },
+      "webhookId": "e50712e8-2c6f-4f96-9708-a9386df57bab"
+    },
+    {
+      "id": "ee4feff2-ca23-40c9-ac43-916ae7fd9a4a",
+      "name": "Note 7656582d",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -170
+      ],
+      "parameters": {
+        "content": "## Nightly maintenance\nExpired sessions, carts abandoned for 90 days and the product cache are cleaned every night; the developer gets the last lines of the error log.",
+        "width": 1500,
+        "height": 110,
+        "color": 7
+      }
+    }
+  ],
+  "connections": {
+    "Every night at 3:00": {
+      "main": [
+        [
+          {
+            "node": "Clear expired sessions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear expired sessions": {
+      "main": [
+        [
+          {
+            "node": "Clear abandoned carts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear abandoned carts": {
+      "main": [
+        [
+          {
+            "node": "Clear the product cache",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear the product cache": {
+      "main": [
+        [
+          {
+            "node": "Last lines of the error log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Last lines of the error log": {
+      "main": [
+        [
+          {
+            "node": "Build the report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build the report": {
+      "main": [
+        [
+          {
+            "node": "E-mail the developer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "name": "Daily sales digest",
+  "nodes": [
+    {
+      "id": "cf7469e0-a422-4105-b9f6-fa4a27f3d085",
+      "name": "Every morning at 9:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "8445d2d6-eb99-47a5-98f5-cb8902d78243",
+      "name": "Orders of the last 24 hours",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCart",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "resource": "order",
+        "operation": "getAll",
+        "returnAll": true,
+        "filters": {
+          "dateAddedFrom": "={{ $now.minus({ days: 1 }).toISO() }}"
+        }
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "e070149a-21c1-4867-87d4-c76c02bf94d3",
+      "name": "Build the digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const orders = $input.all().map((item) => item.json);\nconst money = (value) => '$' + Number(value).toFixed(2);\nconst total = orders.reduce((sum, order) => sum + Number(order.total), 0);\nconst rows = orders.map((o) => `<tr><td>#${o.order_id}</td><td>${o.customer}</td><td>${o.order_status}</td><td align=\"right\">${money(o.total)}</td></tr>`).join('');\nconst html = `<h2>Orders of the last 24 hours</h2>\n<p><b>${orders.length}</b> orders, revenue <b>${money(total)}</b>, average order <b>${money(orders.length ? total / orders.length : 0)}</b></p>\n<table cellpadding=\"6\" border=\"1\" style=\"border-collapse:collapse\">\n<tr><th>Order</th><th>Customer</th><th>Status</th><th>Total</th></tr>${rows}</table>`;\nreturn [{ json: { orders: orders.length, revenue: total, html } }];"
+      }
+    },
+    {
+      "id": "84a03ed7-9325-4e0c-948f-1a4d974e9bc0",
+      "name": "E-mail the manager",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "n8n@your-store.com",
+        "toEmail": "manager@your-store.com",
+        "subject": "=Sales digest: {{ $json.orders }} orders, ${{ $json.revenue.toFixed(2) }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "name": "Store mailbox (SMTP)"
+        }
+      },
+      "webhookId": "4c6c1853-5a2d-4b91-a8fc-9e3838f21269"
+    },
+    {
+      "id": "5890d1ed-5e06-48ed-b8b7-a439750af70d",
+      "name": "Note 44cde610",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -170
+      ],
+      "parameters": {
+        "content": "## Daily sales digest\nEvery morning the manager gets the orders of the last 24 hours with revenue and the average order.",
+        "width": 860,
+        "height": 110,
+        "color": 5
+      }
+    }
+  ],
+  "connections": {
+    "Every morning at 9:00": {
+      "main": [
+        [
+          {
+            "node": "Orders of the last 24 hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Orders of the last 24 hours": {
+      "main": [
+        [
+          {
+            "node": "Build the digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build the digest": {
+      "main": [
+        [
+          {
+            "node": "E-mail the manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

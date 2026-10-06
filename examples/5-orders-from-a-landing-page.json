@@ -1,0 +1,127 @@
+{
+  "name": "Orders from a landing page (standard OpenCart API)",
+  "nodes": [
+    {
+      "id": "df1dc7f0-89e9-496b-b847-a44f03438ba5",
+      "name": "Order form submitted",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "landing-order",
+        "options": {}
+      },
+      "webhookId": "d8e030ff-2b8f-426e-b6a7-0b96cc1c33f0"
+    },
+    {
+      "id": "a72fcf8f-329e-423e-98fb-ecc6f8b24dcd",
+      "name": "Create the order",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCart",
+      "typeVersion": 1,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "api": "standard",
+        "standardResource": "order",
+        "standardOperation": "create",
+        "standardFirstname": "={{ $json.body.firstname }}",
+        "standardLastname": "={{ $json.body.lastname }}",
+        "standardEmail": "={{ $json.body.email }}",
+        "standardTelephone": "={{ $json.body.telephone }}",
+        "standardProducts": {
+          "product": [
+            {
+              "productId": "={{ $json.body.product_id }}",
+              "quantity": "={{ $json.body.quantity }}",
+              "optionsJson": "{}"
+            }
+          ]
+        },
+        "standardPaymentAddress": {
+          "address": {
+            "firstname": "={{ $json.body.firstname }}",
+            "lastname": "={{ $json.body.lastname }}",
+            "address1": "={{ $json.body.address }}",
+            "city": "={{ $json.body.city }}",
+            "postcode": "={{ $json.body.postcode }}",
+            "countryId": 56,
+            "zoneId": 0,
+            "customFieldsJson": "{}"
+          }
+        },
+        "standardOrderFields": {
+          "shippingMethod": "flat.flat",
+          "paymentMethod": "cod",
+          "comment": "Order from the landing page"
+        }
+      },
+      "credentials": {
+        "openCartStandardApi": {
+          "name": "OpenCart standard API"
+        }
+      }
+    },
+    {
+      "id": "765293c7-3275-484d-b1f2-b040646f0dfa",
+      "name": "Note 6fe3c0cf",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -190
+      ],
+      "parameters": {
+        "content": "## Orders from a landing page\nWorks with the API built into OpenCart (no extension needed): the store checkout calculates prices, taxes and shipping, subtracts stock and sends its order e-mails.",
+        "width": 560,
+        "height": 140,
+        "color": 2
+      }
+    }
+  ],
+  "connections": {
+    "Order form submitted": {
+      "main": [
+        [
+          {
+            "node": "Create the order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Order form submitted": [
+      {
+        "json": {
+          "headers": {
+            "content-type": "application/json"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "firstname": "Liam",
+            "lastname": "Novak",
+            "email": "liam.novak@example.com",
+            "telephone": "+420 601 234 567",
+            "product_id": 40,
+            "quantity": 1,
+            "address": "Wenceslas Square 1",
+            "city": "Prague",
+            "postcode": "11000"
+          }
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "name": "Low stock alert",
+  "nodes": [
+    {
+      "id": "3b270c01-8537-42a0-85d9-05d41522af4f",
+      "name": "Every day at 8:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "85a15df2-2524-4c14-ab90-250f5a2aefb0",
+      "name": "Products with 5 or fewer in stock",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCart",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "resource": "product",
+        "operation": "getAll",
+        "returnAll": true,
+        "filters": {
+          "quantityMax": 5,
+          "status": true
+        }
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "1ec6384f-d969-4072-8699-0f8523c50b1d",
+      "name": "Build the report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const products = $input.all().map((item) => item.json);\nconst rows = products.map((p) => `<tr><td>${p.name}</td><td>${p.sku}</td><td align=\"right\"><b>${p.quantity}</b></td></tr>`).join('');\nconst html = `<h2>${products.length} products are running out</h2>\n<table cellpadding=\"6\" border=\"1\" style=\"border-collapse:collapse\"><tr><th>Product</th><th>SKU</th><th>In stock</th></tr>${rows}</table>`;\nreturn [{ json: { count: products.length, html } }];"
+      }
+    },
+    {
+      "id": "3cad5508-628d-4858-afc1-0d368dd66168",
+      "name": "E-mail purchasing",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "n8n@your-store.com",
+        "toEmail": "manager@your-store.com",
+        "subject": "=Low stock: {{ $json.count }} products",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "name": "Store mailbox (SMTP)"
+        }
+      },
+      "webhookId": "5c381f5e-ee4d-49d7-b94f-f6ee439e52fd"
+    },
+    {
+      "id": "71e08406-1460-40b2-bd2f-e9216d84daae",
+      "name": "Note c711eb2d",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -170
+      ],
+      "parameters": {
+        "content": "## Low stock alert\nEnabled products with 5 or fewer items left go to the purchasing team before they sell out.",
+        "width": 860,
+        "height": 110,
+        "color": 3
+      }
+    }
+  ],
+  "connections": {
+    "Every day at 8:00": {
+      "main": [
+        [
+          {
+            "node": "Products with 5 or fewer in stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Products with 5 or fewer in stock": {
+      "main": [
+        [
+          {
+            "node": "Build the report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build the report": {
+      "main": [
+        [
+          {
+            "node": "E-mail purchasing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

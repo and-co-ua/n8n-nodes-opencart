@@ -1,0 +1,225 @@
+{
+  "name": "AI shop assistant",
+  "nodes": [
+    {
+      "id": "1037336d-6352-4eb6-b4d0-0de3e4f27f5a",
+      "name": "When a chat message is received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "options": {}
+      },
+      "webhookId": "b28b7104-da60-445e-8612-cd4fab08db45"
+    },
+    {
+      "id": "f427d6b9-e715-44cc-9189-f02f136a8cca",
+      "name": "Shop assistant",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "options": {
+          "systemMessage": "You are the assistant of an OpenCart store. Use the tools to look up products, stock, orders and customers. Answer briefly, with prices and order numbers."
+        }
+      }
+    },
+    {
+      "id": "27369735-99ea-43cb-ae58-9b37cf5a88ea",
+      "name": "Claude",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        120,
+        240
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-sonnet-5-5"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "anthropicApi": {
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "id": "c3206836-2f66-49d3-ac0c-81bcc5c85824",
+      "name": "Chat memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        240
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "302870b3-a348-4efb-ad24-f1e8e4dee2db",
+      "name": "Find products",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCartTool",
+      "typeVersion": 1,
+      "position": [
+        400,
+        240
+      ],
+      "parameters": {
+        "toolDescription": "Find products by name, model or SKU; returns price, special price and stock",
+        "resource": "product",
+        "operation": "getAll",
+        "limit": 10,
+        "filters": {
+          "search": "={{ $fromAI('search', 'Product name, model or SKU', 'string') }}"
+        }
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "4eba7666-a0d7-4130-b88a-143287b1881c",
+      "name": "Find orders of a customer",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCartTool",
+      "typeVersion": 1,
+      "position": [
+        540,
+        240
+      ],
+      "parameters": {
+        "toolDescription": "Find the orders of a customer by e-mail",
+        "resource": "order",
+        "operation": "getAll",
+        "limit": 10,
+        "filters": {
+          "email": "={{ $fromAI('email', 'E-mail of the customer', 'string') }}"
+        }
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "d5124264-523f-4af9-a205-1cf3413b4075",
+      "name": "Order details",
+      "type": "@and-co-ua/n8n-nodes-opencart.openCartTool",
+      "typeVersion": 1,
+      "position": [
+        680,
+        240
+      ],
+      "parameters": {
+        "toolDescription": "Get an order with its products, totals, addresses and status history",
+        "resource": "order",
+        "operation": "get",
+        "orderId": "={{ $fromAI('order_id', 'Order number', 'number') }}"
+      },
+      "credentials": {
+        "openCartApi": {
+          "name": "OpenCart store"
+        }
+      }
+    },
+    {
+      "id": "c819c4e7-638a-4465-91b3-291adbc6e971",
+      "name": "Note 16512bec",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -190
+      ],
+      "parameters": {
+        "content": "## AI shop assistant\nAsk in plain language: \"Which MacBooks are in stock?\", \"Where is the order of emma.wilson@example.com?\" The agent calls OpenCart as tools.",
+        "width": 860,
+        "height": 130,
+        "color": 6
+      }
+    }
+  ],
+  "connections": {
+    "When a chat message is received": {
+      "main": [
+        [
+          {
+            "node": "Shop assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Shop assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Shop assistant",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find products": {
+      "ai_tool": [
+        [
+          {
+            "node": "Shop assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find orders of a customer": {
+      "ai_tool": [
+        [
+          {
+            "node": "Shop assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order details": {
+      "ai_tool": [
+        [
+          {
+            "node": "Shop assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
