@@ -49,8 +49,15 @@ import {
 	informationFields,
 	informationOperations,
 } from './descriptions/InformationDescription';
+import { buildImageRequest, imageFields, imageOperations } from './descriptions/ImageDescription';
+import { buildLogRequest, logFields, logOperations } from './descriptions/LogDescription';
 import { buildLookupRequest, lookupFields, lookupOperations } from './descriptions/LookupDescription';
 import { buildMailRequest, mailFields, mailOperations } from './descriptions/MailDescription';
+import {
+	buildMaintenanceRequest,
+	maintenanceFields,
+	maintenanceOperations,
+} from './descriptions/MaintenanceDescription';
 import {
 	buildManufacturerRequest,
 	manufacturerFields,
@@ -90,9 +97,12 @@ const BUILDERS: Record<
 	customer_group: buildCustomerGroupRequest,
 	download: buildDownloadRequest,
 	filter_group: buildFilterGroupRequest,
+	image: buildImageRequest,
 	information: buildInformationRequest,
+	log: buildLogRequest,
 	lookup: buildLookupRequest,
 	mail: buildMailRequest,
+	maintenance: buildMaintenanceRequest,
 	manufacturer: buildManufacturerRequest,
 	marketing: buildMarketingRequest,
 	option: buildOptionRequest,
@@ -216,8 +226,18 @@ export class OpenCart implements INodeType {
 						value: 'voucher',
 					},
 					{
+						name: 'Image',
+						value: 'image',
+						description: 'URLs of resized store images',
+					},
+					{
 						name: 'Information Page',
 						value: 'information',
+					},
+					{
+						name: 'Log',
+						value: 'log',
+						description: 'Error and OCMOD logs',
 					},
 					{
 						name: 'Lookup',
@@ -228,6 +248,11 @@ export class OpenCart implements INodeType {
 						name: 'Mail',
 						value: 'mail',
 						description: 'Mailing to customers, as Marketing → Mail in the admin panel',
+					},
+					{
+						name: 'Maintenance',
+						value: 'maintenance',
+						description: 'Cleanup of sessions and caches',
 					},
 					{
 						name: 'Manufacturer',
@@ -282,12 +307,18 @@ export class OpenCart implements INodeType {
 			...downloadFields,
 			...filterGroupOperations,
 			...filterGroupFields,
+			...imageOperations,
+			...imageFields,
 			...informationOperations,
 			...informationFields,
+			...logOperations,
+			...logFields,
 			...lookupOperations,
 			...lookupFields,
 			...mailOperations,
 			...mailFields,
+			...maintenanceOperations,
+			...maintenanceFields,
 			...manufacturerOperations,
 			...manufacturerFields,
 			...marketingOperations,
