@@ -22,6 +22,7 @@ import {
 	categoryOperations,
 } from './descriptions/CategoryDescription';
 import type { ApiCall } from './descriptions/common';
+import { buildCouponRequest, couponFields, couponOperations } from './descriptions/CouponDescription';
 import {
 	buildCustomerApprovalRequest,
 	customerApprovalFields,
@@ -82,6 +83,7 @@ const BUILDERS: Record<
 	attribute: buildAttributeRequest,
 	attribute_group: buildAttributeGroupRequest,
 	category: buildCategoryRequest,
+	coupon: buildCouponRequest,
 	customer: buildCustomerRequest,
 	customer_approval: buildCustomerApprovalRequest,
 	customer_group: buildCustomerGroupRequest,
@@ -184,6 +186,10 @@ export class OpenCart implements INodeType {
 						value: 'category',
 					},
 					{
+						name: 'Coupon',
+						value: 'coupon',
+					},
+					{
 						name: 'Customer',
 						value: 'customer',
 					},
@@ -257,6 +263,8 @@ export class OpenCart implements INodeType {
 			...attributeGroupFields,
 			...categoryOperations,
 			...categoryFields,
+			...couponOperations,
+			...couponFields,
 			...customerOperations,
 			...customerFields,
 			...customerApprovalOperations,
