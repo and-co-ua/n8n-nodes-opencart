@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-06
+
 ### Added
 
 - The credential test reports a store where the n8n API module is not activated yet
   (module 1.2.0+).
-
 - Example workflows in `examples/` with screenshots in the README: daily sales digest, low stock
   alert, supplier price and stock sync, AI shop assistant, orders from a landing page, nightly
   maintenance.
