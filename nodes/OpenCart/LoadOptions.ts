@@ -26,8 +26,17 @@ async function lookupOptions(
 const byName = (row: IDataObject) => String(row.name);
 
 export const loadOptions = {
+	/** Optional everywhere: the first option (empty value) means the store default language. */
 	async getLanguages(this: ILoadOptionsFunctions) {
-		return lookupOptions.call(this, 'languages', 'language_id', (row) => `${row.name} (${row.code})`);
+		return [
+			{ name: 'Store Default', value: '' },
+			...(await lookupOptions.call(this, 'languages', 'language_id', (row) => `${row.name} (${row.code})`)),
+		];
+	},
+
+	/** Lookup → Zones: the first option (empty value) returns zones of all countries. */
+	async getCountriesOptional(this: ILoadOptionsFunctions) {
+		return [{ name: 'All Countries', value: '' }, ...(await loadOptions.getCountries.call(this))];
 	},
 
 	async getStores(this: ILoadOptionsFunctions) {
