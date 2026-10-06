@@ -10,6 +10,7 @@ workflow automation platform.
 
 [Installation](#installation) ·
 [Operations](#operations) ·
+[Usage examples](#usage-examples) ·
 [Credentials](#credentials) ·
 [Compatibility](#compatibility) ·
 [Development](#development) ·
@@ -100,6 +101,29 @@ language and only the fields you set.
 
 IDs (country, zone, order status, customer group, store) are entered as numbers.
 
+
+## Usage examples
+
+**Price and stock sync from a spreadsheet (Full API).**
+Schedule Trigger → Google Sheets (read rows with SKU, price, quantity) → OpenCart
+*Product → Bulk Update* with *Match By* = SKU and the fields mapped from the sheet. The node sends
+the rows in batches of 500 and returns one item per row with `success` / `error`; route failed
+rows with an IF node to a notification.
+
+**New orders to a chat (Full API).**
+Schedule Trigger (every 5 minutes) → OpenCart *Order → Get Many* with *Date Added From* set to
+`{{ $now.minus(5, 'minutes') }}` → Slack / Telegram message with the order number, customer and
+total. Add *Order → Add History* to move processed orders to the next status.
+
+**Orders from another channel (Standard OpenCart API or Full API).**
+Webhook (order from a marketplace or a form) → OpenCart *Order → Quote* to see the shipping and
+payment method codes for the products and address → *Order → Create* with the chosen codes. The
+store calculates prices, taxes and totals, subtracts stock and sends its order e-mails.
+
+**Nightly maintenance (Full API).**
+Schedule Trigger (daily) → *Maintenance → Clear Expired Sessions* → *Maintenance → Clear
+Abandoned Carts* (e.g. older than 90 days) → *Log → Get* (Error Log, last 50 lines) → e-mail the
+log when it is not empty.
 
 ## Credentials
 
